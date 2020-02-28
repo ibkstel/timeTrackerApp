@@ -1,6 +1,9 @@
 android/app/src/main/AndroidManifest.xml
 android/gradle.properties
 ios/timeTracker/Info.plist
+ios/Podfile.lock
+ios/timeTracker.xcworkspace/contents.xcworkspacedata
+
 
 
 # OSX
@@ -25,7 +28,6 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
-
 # Android/IntelliJ
 #
 build/
