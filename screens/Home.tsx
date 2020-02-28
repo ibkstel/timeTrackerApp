@@ -6,9 +6,11 @@ import { RootStackParamList } from '../AppNav';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Card from '../components/card/Card';
 import { lightColor } from './colors';
-import GraphCard from '../components/card/GraphCard';
+import { Data } from '../interfaces/Data';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
-interface Props {
+interface Props extends StateRedux{
   navigation: StackNavigationProp<RootStackParamList, 'Home'>;
 }
 
@@ -31,17 +33,15 @@ export class HomeScreen extends Component<Props> {
 
 
   render() {
+    console.log(this.props.Data)
     return (
       <ScrollView>
         <View style={{ marginTop: 12 }}>
-          <GraphCard
-            data={{ Durations: [{ startDate: new Date(-86400000 + new Date().getTime() + new Date().getTimezoneOffset() * 60000), endDate: new Date(-86400000 + new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000) }, { startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000), endDate: new Date(new Date().getTime() + 200000 + new Date().getTimezoneOffset() * 60000) }], label: 'Gym' }}
+          <Card
+            data={this.props.Data[0]}
           />
           <Card
-            data={{ Durations: [{ startDate: new Date(-86400000 + new Date().getTime() + new Date().getTimezoneOffset() * 60000), endDate: new Date(-86400000 + new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000) }, { startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000), endDate: new Date(new Date().getTime() + 200000 + new Date().getTimezoneOffset() * 60000) }], label: 'Gym' }}
-          />
-          <Card
-            data={{ Durations: [{ startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000), endDate: new Date(new Date().getTime() + 150000 + new Date().getTimezoneOffset() * 60000) }, { startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000), endDate: new Date(new Date().getTime() + 200000 + new Date().getTimezoneOffset() * 60000) }], label: 'Test' }}
+            data={this.props.Data[1]}
           />
         </View>
       </ScrollView >
@@ -49,7 +49,22 @@ export class HomeScreen extends Component<Props> {
   }
 }
 
-export default HomeScreen;
+interface StateRedux {
+  Data: Array<Data>
+}
+
+const mapStateToProps = (state: StateRedux) => {
+  const { Data } = state;
+  return { Data };
+};
+
+const mapDispatchToProps = (dispatch: any) => (
+  bindActionCreators({
+  }, dispatch)
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
+
 
 
 const styles = StyleSheet.create({

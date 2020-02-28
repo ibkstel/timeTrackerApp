@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 import { seperatorColor } from '../../screens/colors';
 
 export class Seperator extends Component {

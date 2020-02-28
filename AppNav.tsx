@@ -17,7 +17,7 @@ export default class AppNav extends Component {
     render() {
         return (
             <NavigationContainer>
-                <Stack.Navigator screenOptions={{headerStyle: { backgroundColor: mainColor, elevation: 1}, headerTintColor: lightColor}}>
+                <Stack.Navigator screenOptions={{headerStyle: { backgroundColor: mainColor, elevation: 1}, headerTintColor: lightColor}} >
                     <Stack.Screen options={{headerLeft: (props) => {
                         return (
                             <View {...props}></View>

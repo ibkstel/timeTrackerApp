@@ -4,18 +4,21 @@ import { secondaryColor, mainColor, lightColor, lightSecondaryColor } from '../.
 import Seperator from '../../components/seperator/Seperator';
 import { Data } from '../../interfaces/Data';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Graph from '../../components/graph/Graph'
 import moment from 'moment';
 import { getDuration } from '../../utils/time/duration';
-import { sameDay, groupDates } from '../../utils/date/date';
+import { groupDates } from '../../utils/date/date';
 
 
 interface Props {
     data: Data,
     style?: ViewStyle,
-    graph?: boolean
+    graphTitle?: string,
+    graphStyle?: ViewStyle
 }
 
 interface State {
+    graph: boolean,
     expanded: boolean
 }
 
@@ -24,10 +27,11 @@ export class Card extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
+            graph: false,
             expanded: false
         }
     }
-    
+
     public static defaultProps = {
         graph: false
     };
@@ -50,7 +54,7 @@ export class Card extends Component<Props, State> {
 
 
     details = () => {
-        if (!this.props.graph) {
+        if (!this.state.graph) {
             return (
                 <View style={styles.cardMidView}>
                     <SectionList
@@ -76,7 +80,10 @@ export class Card extends Component<Props, State> {
         else {
             return (
                 <View style={styles.cardMidView}>
-                    {this.props.children}
+                    <Graph
+                        style={this.props.graphStyle}
+                        data={this.props.data}
+                    />
                 </View>
             )
         }
@@ -85,10 +92,16 @@ export class Card extends Component<Props, State> {
     render() {
         if (!this.state.expanded) {
             return (
-                <View style={{...styles.card, ...this.props.style}}>
+                <View style={{ ...styles.card, ...this.props.style }}>
                     <View style={styles.cardTopView}>
-                        <Text style={styles.titleText}> {this.props.data.label} </Text>
-                        <Icon style={styles.icon} name="arrow-drop-down" onPress={() => this.setState({ expanded: !this.state.expanded })} />
+                        <Text style={styles.titleText}>{this.props.data.label}</Text>
+                        {
+                            this.state.expanded ?
+                                <Icon style={styles.iconChart} name="insert-chart" onPress={() => this.setState({ graph: !this.state.graph })} />
+                                :
+                                <View />
+                        }
+                        <Icon style={styles.iconArrow} name="arrow-drop-down" onPress={() => this.setState({ expanded: !this.state.expanded })} />
                     </View>
                     <Seperator />
                     {this.props.data.Durations.length === 0 ?
@@ -106,10 +119,16 @@ export class Card extends Component<Props, State> {
         }
         else {
             return (
-                <View style={{...styles.card, ...this.props.style}}>
+                <View style={{ ...styles.card, ...this.props.style }}>
                     <View style={styles.cardTopView}>
-                        <Text style={styles.titleText}> {this.props.data.label} </Text>
-                        <Icon style={styles.icon} name="arrow-drop-up" onPress={() => this.setState({ expanded: !this.state.expanded })} />
+                        <Text style={styles.titleText}>{this.props.data.label}</Text>
+                        {
+                            this.state.expanded ?
+                                <Icon style={styles.iconChart} name="insert-chart" onPress={() => this.setState({ graph: !this.state.graph })} />
+                                :
+                                <View />
+                        }
+                        <Icon style={styles.iconArrow} name="arrow-drop-up" onPress={() => this.setState({ expanded: !this.state.expanded })} />
                     </View>
                     <Seperator />
                     {this.details()}
@@ -136,11 +155,17 @@ const styles = StyleSheet.create({
         paddingBottom: 12,
         paddingHorizontal: 16
     },
-    icon: {
+    iconChart: {
+        position: 'absolute',
+        fontSize: 24,
+        color: lightColor,
+        right: 40
+    },
+    iconArrow: {
         position: 'absolute',
         fontSize: 32,
         color: lightColor,
-        right: 16
+        right: 8
     },
     titleText: {
         fontSize: 24,
