@@ -20,7 +20,6 @@ export const sameDay = (date1: Date, date2: Date) => {
  */
 
 export const sameDate = (date1: Date, date2: Date) => {
-    console.log(date1.getTime() === date2.getTime());
     return date1.getTime() === date2.getTime();
 }
 

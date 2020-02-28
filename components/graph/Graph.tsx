@@ -23,8 +23,7 @@ export class Graph extends Component<Props>{
                     .map((value, index) => ({
                         value,
                         svg: {
-                            fill: randomColor(),
-                            onPress: () => console.log('press', index),
+                            fill: randomColor()
                         },
                         key: `pie-${index}`,
                     }))}

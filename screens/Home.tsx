@@ -33,7 +33,6 @@ export class HomeScreen extends Component<Props> {
 
 
   render() {
-    console.log(this.props.Data)
     return (
       <ScrollView>
         <View style={{ marginTop: 12 }}>

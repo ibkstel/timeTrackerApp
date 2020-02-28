@@ -11,7 +11,7 @@ const INITIAL_STATE: Array<Data> = [
     },
     {
         Durations: [
-            { startDate: new Date(-86400000 + new Date().getTime() + new Date().getTimezoneOffset() * 60000), endDate: new Date(-86400000 + new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000) }, { startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000), endDate: new Date(new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000) }
+            { startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000), endDate: new Date(new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000) }, { startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000), endDate: new Date(new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000) }
         ],
         label: 'School'
     }

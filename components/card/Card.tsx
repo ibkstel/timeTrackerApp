@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, FlatList, SectionList, SectionListData, ViewStyle } from 'react-native'
+import { Text, StyleSheet, FlatList, SectionList, SectionListData, ViewStyle } from 'react-native'
+import { View } from 'react-native-animatable';
 import { secondaryColor, mainColor, lightColor, lightSecondaryColor } from '../../screens/colors';
 import Seperator from '../../components/seperator/Seperator';
 import { Data } from '../../interfaces/Data';
@@ -28,7 +29,7 @@ export class Card extends Component<Props, State> {
         super(props);
         this.state = {
             graph: false,
-            expanded: false
+            expanded: true
         }
     }
 
@@ -56,7 +57,7 @@ export class Card extends Component<Props, State> {
     details = () => {
         if (!this.state.graph) {
             return (
-                <View style={styles.cardMidView}>
+                <View animation="fadeIn" duration={600} style={styles.cardMidView}>
                     <SectionList
                         sections={groupDates(this.props.data)}
                         keyExtractor={(_, index) => index.toString()}
@@ -79,7 +80,7 @@ export class Card extends Component<Props, State> {
         }
         else {
             return (
-                <View style={styles.cardMidView}>
+                <View animation="fadeIn" duration={600} style={styles.cardMidView}>
                     <Graph
                         style={this.props.graphStyle}
                         data={this.props.data}
@@ -92,7 +93,7 @@ export class Card extends Component<Props, State> {
     render() {
         if (!this.state.expanded) {
             return (
-                <View style={{ ...styles.card, ...this.props.style }}>
+                <View style={{ ...styles.card, ...this.props.style, opacity: 1 }}>
                     <View style={styles.cardTopView}>
                         <Text style={styles.titleText}>{this.props.data.label}</Text>
                         {
@@ -119,7 +120,7 @@ export class Card extends Component<Props, State> {
         }
         else {
             return (
-                <View style={{ ...styles.card, ...this.props.style }}>
+                <View style={{ ...styles.card, ...this.props.style, opacity: 1 }}>
                     <View style={styles.cardTopView}>
                         <Text style={styles.titleText}>{this.props.data.label}</Text>
                         {
