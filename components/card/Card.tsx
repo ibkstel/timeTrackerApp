@@ -1,39 +1,94 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet } from 'react-native'
+import { Text, View, StyleSheet, FlatList, SectionList, SectionListData, ViewStyle } from 'react-native'
 import { secondaryColor, mainColor, lightColor, lightSecondaryColor } from '../../screens/colors';
 import Seperator from '../../components/seperator/Seperator';
 import { Data } from '../../interfaces/Data';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import moment from 'moment';
+import { getDuration } from '../../utils/time/duration';
+import { sameDay, groupDates } from '../../utils/date/date';
+
 
 interface Props {
     data: Data,
+    style?: ViewStyle,
+    graph?: boolean
+}
+
+interface State {
     expanded: boolean
 }
 
-export class Card extends Component<Props> {
+export class Card extends Component<Props, State> {
+
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            expanded: false
+        }
+    }
+    
+    public static defaultProps = {
+        graph: false
+    };
+
     getTotal = () => {
         let total = 0;
         let durations = this.props.data.Durations.map((i) => i.endDate.getTime() - i.startDate.getTime());
         for (let i in durations)
             total += durations[i];
-        return total;
+        return moment(new Date(total + new Date().getTimezoneOffset() * 60000)).format("HH:mm:ss")
     }
 
     getAvg = () => {
         let total = 0;
         let durations = this.props.data.Durations.map((i) => i.endDate.getTime() - i.startDate.getTime());
         for (let i in durations)
-            total += durations[i];
-        return total / durations.length;
+            total += durations[i] + new Date().getTimezoneOffset() * 60000;
+        return moment(new Date(total / durations.length)).format("HH:mm:ss")
+    }
+
+
+    details = () => {
+        if (!this.props.graph) {
+            return (
+                <View style={styles.cardMidView}>
+                    <SectionList
+                        sections={groupDates(this.props.data)}
+                        keyExtractor={(_, index) => index.toString()}
+                        renderSectionHeader={({ section: { title } }) => (
+                            <Text style={styles.detailTextHeader}>{title}</Text>
+                        )}
+                        renderItem={({ item, index }) => {
+                            return (
+                                <View>
+                                    <View style={styles.detailTextRow}>
+                                        <Icon name="brightness-1" color={lightColor} style={{ paddingRight: 2 }} size={8} />
+                                        <Text style={styles.detailText}>{moment(getDuration(item.startDate, item.endDate)).format("HH:mm:ss")}</Text>
+                                    </View>
+                                </View>
+                            );
+                        }}
+                    />
+                </View>
+            );
+        }
+        else {
+            return (
+                <View style={styles.cardMidView}>
+                    {this.props.children}
+                </View>
+            )
+        }
     }
 
     render() {
-        if (!this.props.expanded) {
+        if (!this.state.expanded) {
             return (
-                <View style={styles.card}>
+                <View style={{...styles.card, ...this.props.style}}>
                     <View style={styles.cardTopView}>
                         <Text style={styles.titleText}> {this.props.data.label} </Text>
-                        <Icon style={styles.icon} name="arrow-drop-down" />
+                        <Icon style={styles.icon} name="arrow-drop-down" onPress={() => this.setState({ expanded: !this.state.expanded })} />
                     </View>
                     <Seperator />
                     {this.props.data.Durations.length === 0 ?
@@ -51,15 +106,23 @@ export class Card extends Component<Props> {
         }
         else {
             return (
-                <View style={styles.card}>
+                <View style={{...styles.card, ...this.props.style}}>
                     <View style={styles.cardTopView}>
                         <Text style={styles.titleText}> {this.props.data.label} </Text>
-                        <Icon style={styles.icon} name="arrow-drop-down" />
+                        <Icon style={styles.icon} name="arrow-drop-up" onPress={() => this.setState({ expanded: !this.state.expanded })} />
                     </View>
                     <Seperator />
-                    <View style={styles.cardBottomView}>
-                        <Text style={styles.titleText}> {this.props.data.label} </Text>
-                    </View>
+                    {this.details()}
+                    {this.props.data.Durations.length === 0 ?
+                        <View style={styles.cardBottomView}>
+                            <Text style={styles.bottomText}>Start</Text>
+                        </View>
+                        :
+                        <View style={styles.cardBottomView}>
+                            <Text style={styles.bottomText}>Average: {this.getAvg()}</Text>
+                            <Text style={styles.bottomText}>Total: {this.getTotal()}</Text>
+                        </View>
+                    }
                 </View>
             );
         }
@@ -70,7 +133,7 @@ export default Card
 
 const styles = StyleSheet.create({
     card: {
-        paddingVertical: 12,
+        paddingBottom: 12,
         paddingHorizontal: 16
     },
     icon: {
@@ -83,12 +146,21 @@ const styles = StyleSheet.create({
         fontSize: 24,
         color: lightColor
     },
-    detailText: {
-        fontSize: 24,
+    detailTextHeader: {
+        fontSize: 20,
         color: lightColor
     },
+    detailText: {
+        fontSize: 20,
+        color: lightColor
+    },
+    detailTextRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-end'
+    },
     bottomText: {
-        fontSize: 24,
+        fontSize: 20,
         color: lightSecondaryColor
     },
     cardTopView: {
@@ -97,6 +169,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderTopLeftRadius: 24,
         borderTopRightRadius: 24,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        backgroundColor: secondaryColor
+    },
+    cardMidView: {
         paddingHorizontal: 16,
         paddingVertical: 12,
         backgroundColor: secondaryColor
