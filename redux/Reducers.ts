@@ -33,17 +33,36 @@ const INITIAL_STATE: Array<Data> = [
 
 interface Action {
     type: string;
-    payload: Data;
+    payload: Array<Data>;
 }
 
-const keyReducer = (state = INITIAL_STATE, action: Action) => {
+const dataReducer = (state = INITIAL_STATE, action: Action) => {
     switch (action.type) {
         case 'SET_DATA':
             let setData = action.payload;
+            console.log(setData);
             return setData;
+        default:
+            console.log(state);
+            return state;
+    }
+};
+
+const INITIAL_STATE_TIMER: Array<boolean> = [];
+
+interface ActionTimer {
+    type: string;
+    payload: Array<boolean>;
+}
+
+const timerReducer = (state = INITIAL_STATE_TIMER, action: ActionTimer) => {
+    switch (action.type) {
+        case 'SET_TIMER':
+            let timer = action.payload;
+            return timer;
         default:
             return state;
     }
 };
 
-export const store = createStore(combineReducers({ Data: keyReducer }));
+export const store = createStore(combineReducers({ Data: dataReducer, Timer: timerReducer }));

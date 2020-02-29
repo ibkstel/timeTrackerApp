@@ -3,23 +3,37 @@ import { Text, StyleSheet, FlatList, SectionList, SectionListData, ViewStyle } f
 import { View } from 'react-native-animatable';
 import { secondaryColor, mainColor, lightColor, lightSecondaryColor } from '../../screens/colors';
 import Seperator from '../../components/seperator/Seperator';
-import { Data } from '../../interfaces/Data';
+import { Data, Dates } from '../../interfaces/Data';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import AsyncStorage from '@react-native-community/async-storage';
 import Graph from '../../components/graph/Graph';
 import moment from 'moment';
 import { getDuration } from '../../utils/time/duration';
 import { groupDates } from '../../utils/date/date';
+import BackgroundTimer from 'react-native-background-timer';
+import { setTimer, setData } from '../../redux/Actions';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
 interface Props {
     data: Data;
+    timerActive: boolean;
+    anyTimerActive: boolean;
     style?: ViewStyle;
     graphTitle?: string;
     graphStyle?: ViewStyle;
+    index: number;
+    Timer?: Array<boolean>;
+    Data?: Array<Data>;
+    setTimer: (a: Array<boolean>) => void;
+    setData: (a: Array<Data>) => void;
 }
 
 interface State {
     graph: boolean;
     expanded: boolean;
+    ctr: number;
+    data: Dates | null;
 }
 
 export class Card extends Component<Props, State> {
@@ -27,13 +41,11 @@ export class Card extends Component<Props, State> {
         super(props);
         this.state = {
             graph: false,
-            expanded: true,
+            expanded: false,
+            ctr: 0,
+            data: null,
         };
     }
-
-    public static defaultProps = {
-        graph: false,
-    };
 
     getTotal = () => {
         let total = 0;
@@ -94,6 +106,56 @@ export class Card extends Component<Props, State> {
                 <View style={{ ...styles.card, ...this.props.style, opacity: 1 }}>
                     <View style={styles.cardTopView}>
                         <Text style={styles.titleText}>{this.props.data.label}</Text>
+                        {!this.props.anyTimerActive || this.props.timerActive ? (
+                            <View style={{ position: 'absolute', right: 0, justifyContent: 'center' }}>
+                                {!this.props.timerActive ? (
+                                    <Icon
+                                        style={styles.iconChart}
+                                        name="play-arrow"
+                                        onPress={async () => {
+                                            let t = new Date().getTime() % 10;
+                                            await AsyncStorage.setItem('timer', 'true');
+                                            let Timer = this.props.Timer!.map((i, index) =>
+                                                index === this.props.index ? true : false,
+                                            );
+                                            this.props.setTimer(Timer);
+                                            let ctr = 0;
+                                            let data: Dates = { startDate: new Date(), endDate: new Date() };
+                                            console.log(data);
+                                            BackgroundTimer.runBackgroundTimer(() => {
+                                                ctr++;
+                                                console.log(ctr);
+                                                this.setState({ data });
+                                            }, 1000);
+                                        }}
+                                    />
+                                ) : (
+                                    <Icon
+                                        style={styles.iconChart}
+                                        name="pause"
+                                        onPress={async () => {
+                                            await AsyncStorage.setItem('timer', 'false');
+                                            let Timer = this.props.Timer!.map((i, index) => false);
+                                            this.props.setTimer(Timer);
+                                            let Data = this.props.Data!;
+                                            for (let i = 0; i < Data.length; i++) {
+                                                if (Data[i].label === this.props.data.label)
+                                                    Data[i].Durations.push({
+                                                        startDate: this.state.data!.startDate,
+                                                        endDate: new Date(),
+                                                    });
+                                            }
+                                            console.log(Data);
+                                            this.props.setData(Data);
+                                            BackgroundTimer.stopBackgroundTimer();
+                                        }}
+                                    />
+                                )}
+                            </View>
+                        ) : (
+                            <View />
+                        )}
+
                         {this.state.expanded ? (
                             <Icon
                                 style={styles.iconChart}
@@ -160,7 +222,22 @@ export class Card extends Component<Props, State> {
     }
 }
 
-export default Card;
+interface StateRedux {
+    Timer: Array<boolean>;
+    Data: Array<Data>;
+}
+
+const mapStateToProps = (state: StateRedux) => {
+    const { Timer, Data } = state;
+    return { Timer, Data };
+};
+
+const mapDispatchToProps = (dispatch: any) => bindActionCreators({ setTimer, setData }, dispatch);
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(Card);
 
 const styles = StyleSheet.create({
     card: {
