@@ -1,5 +1,5 @@
-import { Data } from "../../interfaces/Data";
-import moment from "moment";
+import { Data } from '../../interfaces/Data';
+import moment from 'moment';
 
 /**
  * @param date1 First Date
@@ -8,10 +8,12 @@ import moment from "moment";
  */
 
 export const sameDay = (date1: Date, date2: Date) => {
-    return date1.getFullYear() === date2.getFullYear() &&
+    return (
+        date1.getFullYear() === date2.getFullYear() &&
         date1.getMonth() === date2.getMonth() &&
-        date1.getDate() === date2.getDate();
-}
+        date1.getDate() === date2.getDate()
+    );
+};
 
 /**
  * @param date1 First Date
@@ -21,7 +23,7 @@ export const sameDay = (date1: Date, date2: Date) => {
 
 export const sameDate = (date1: Date, date2: Date) => {
     return date1.getTime() === date2.getTime();
-}
+};
 
 /**
  * Format the data to be used in a section list by grouping.
@@ -33,9 +35,12 @@ export const groupDates = (dates: Data) => {
     let sections = [];
     const Durations = dates.Durations;
     let i = 0;
-    while(i < Durations.length) {
+    while (i < Durations.length) {
         let date = Durations[i];
-        let obj = { title: moment(date.startDate).format('DD:MM:YYYY'), data: [date] }
+        let obj = {
+            title: moment(date.startDate).format('DD:MM:YYYY'),
+            data: [date],
+        };
         i++;
         while (i < Durations.length && sameDay(date.startDate, Durations[i].startDate)) {
             obj.data.push(Durations[i]);
@@ -44,4 +49,4 @@ export const groupDates = (dates: Data) => {
         sections.push(obj);
     }
     return sections;
-}
+};

@@ -1,11 +1,12 @@
-import React, { Component, } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { Component } from 'react';
+import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { mainColor, lightColor, secondaryColor } from './screens/colors';
 import HomeScreen from './screens/Home';
 import SecondScreen from './screens/Second';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Stack = createStackNavigator();
@@ -15,52 +16,86 @@ export type RootStackParamList = {
     Second: undefined;
 };
 
-class StackScreen extends Component {
-    render() {
-        return (
-            <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: mainColor, elevation: 1 }, headerTintColor: lightColor }} >
-                <Stack.Screen options={{
+function StackScreen() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: { backgroundColor: mainColor, elevation: 1 },
+                headerTintColor: lightColor,
+            }}>
+            <Stack.Screen
+                options={{
                     headerLeft: (props) => {
-                        return (
-                            <View {...props}></View>
-                        );
-                    }
-                }} name="Home" component={HomeScreen} />
-                <Stack.Screen name="Second" component={SecondScreen} />
-            </Stack.Navigator>
-        );
-    }
+                        return <View {...props} />;
+                    },
+                }}
+                name="Home"
+                component={HomeScreen}
+            />
+            <Stack.Screen name="Second" component={SecondScreen} />
+        </Stack.Navigator>
+    );
 }
 
 const Tab = createBottomTabNavigator();
 
+function TabScreen() {
+    return (
+        <Tab.Navigator
+            tabBarOptions={{
+                activeBackgroundColor: mainColor,
+                inactiveBackgroundColor: mainColor,
+                activeTintColor: lightColor,
+                inactiveTintColor: secondaryColor,
+            }}>
+            <Tab.Screen
+                name="Home"
+                component={StackScreen}
+                options={() => ({
+                    tabBarIcon: ({ color, size }: any) => {
+                        return <Icon name="home" size={size} color={color} />;
+                    },
+                })}
+            />
+            <Tab.Screen
+                name="Settings"
+                component={SecondScreen}
+                options={() => ({
+                    tabBarIcon: ({ color, size }: any) => {
+                        return <Icon name="account-circle" size={size} color={color} />;
+                    },
+                })}
+            />
+        </Tab.Navigator>
+    );
+}
 
-export default class AppNav extends Component {
-    render() {
-        return (
-            <NavigationContainer>
-                <Tab.Navigator
-                    tabBarOptions={{
-                        activeBackgroundColor: mainColor,
-                        inactiveBackgroundColor: mainColor,
-                        activeTintColor: lightColor,
-                        inactiveTintColor: secondaryColor,
-                    }}
-                >
-                    <Tab.Screen name="Home" component={StackScreen}
-                        options={() => ({
-                            tabBarIcon: ({ color, size }: any) => {
-                                return <Icon name="home" size={size} color={color} />;
-                            },
-                        })} />
-                    <Tab.Screen name="Settings" component={SecondScreen}
-                        options={() => ({
-                            tabBarIcon: ({ color, size }: any) => {
-                                return <Icon name="account-circle" size={size} color={color} />;
-                            },
-                        })} />
-                </Tab.Navigator>
-            </NavigationContainer>
-        );
-    }
+function CustomDrawerContent(props: any) {
+    return (
+        <DrawerContentScrollView {...props}>
+            <View
+                style={{
+                    backgroundColor: mainColor,
+                    height: 140,
+                    marginTop: -4,
+                    justifyContent: 'center',
+                }}>
+                <Text style={{ textAlign: 'center', fontSize: 32, color: 'white' }}>Logo</Text>
+            </View>
+            <DrawerItemList {...props} />
+            <DrawerItem label="Help" onPress={() => {}} />
+        </DrawerContentScrollView>
+    );
+}
+
+const Drawer = createDrawerNavigator();
+
+export default function AppNav() {
+    return (
+        <NavigationContainer>
+            <Drawer.Navigator drawerContent={CustomDrawerContent}>
+                <Drawer.Screen name="Home" component={TabScreen} />
+            </Drawer.Navigator>
+        </NavigationContainer>
+    );
 }

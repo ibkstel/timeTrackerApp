@@ -1,26 +1,39 @@
 import { createStore, combineReducers } from 'redux';
-import { } from 'react-redux';
+import {} from 'react-redux';
 import { Data } from '../interfaces/Data';
 
 const INITIAL_STATE: Array<Data> = [
     {
         Durations: [
-            { startDate: new Date(-86400000 + new Date().getTime() + new Date().getTimezoneOffset() * 60000), endDate: new Date(-86400000 + new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000) }, { startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000), endDate: new Date(new Date().getTime() + 200000 + new Date().getTimezoneOffset() * 60000) }
+            {
+                startDate: new Date(-86400000 + new Date().getTime() + new Date().getTimezoneOffset() * 60000),
+                endDate: new Date(-86400000 + new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000),
+            },
+            {
+                startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000),
+                endDate: new Date(new Date().getTime() + 200000 + new Date().getTimezoneOffset() * 60000),
+            },
         ],
-        label: 'Gym'
+        label: 'Gym',
     },
     {
         Durations: [
-            { startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000), endDate: new Date(new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000) }, { startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000), endDate: new Date(new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000) }
+            {
+                startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000),
+                endDate: new Date(new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000),
+            },
+            {
+                startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000),
+                endDate: new Date(new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000),
+            },
         ],
-        label: 'School'
-    }
+        label: 'School',
+    },
 ];
 
-
 interface Action {
-    type: string,
-    payload: Data
+    type: string;
+    payload: Data;
 }
 
 const keyReducer = (state = INITIAL_STATE, action: Action) => {
@@ -32,6 +45,5 @@ const keyReducer = (state = INITIAL_STATE, action: Action) => {
             return state;
     }
 };
-
 
 export const store = createStore(combineReducers({ Data: keyReducer }));
