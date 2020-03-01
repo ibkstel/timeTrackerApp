@@ -33,7 +33,7 @@ export const sameDate = (date1: Date, date2: Date) => {
 
 export const groupDates = (dates: Data) => {
     let sections = [];
-    const Durations = dates.Durations;
+    const Durations = dates.Durations.filter((i) => !i.active);
     let i = 0;
     while (i < Durations.length) {
         let date = Durations[i];

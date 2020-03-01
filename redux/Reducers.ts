@@ -1,49 +1,58 @@
 import { createStore, combineReducers } from 'redux';
-import {} from 'react-redux';
-import { Data } from '../interfaces/Data';
+import { } from 'react-redux';
+import { UserData } from '../interfaces/Data';
 
-const INITIAL_STATE: Array<Data> = [
-    {
-        Durations: [
-            {
-                startDate: new Date(-86400000 + new Date().getTime() + new Date().getTimezoneOffset() * 60000),
-                endDate: new Date(-86400000 + new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000),
-            },
-            {
-                startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000),
-                endDate: new Date(new Date().getTime() + 200000 + new Date().getTimezoneOffset() * 60000),
-            },
-        ],
-        label: 'Gym',
-    },
-    {
-        Durations: [
-            {
-                startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000),
-                endDate: new Date(new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000),
-            },
-            {
-                startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000),
-                endDate: new Date(new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000),
-            },
-        ],
-        label: 'School',
-    },
-];
+const INITIAL_STATE: UserData = {
+    Data: [
+        {
+            Durations: [
+                {
+                    startDate: new Date(-86400000 + new Date().getTime() + new Date().getTimezoneOffset() * 60000),
+                    endDate: new Date(-86400000 + new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000),
+                    active: false,
+                    id: 0
+                },
+                {
+                    startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000),
+                    endDate: new Date(new Date().getTime() + 200000 + new Date().getTimezoneOffset() * 60000),
+                    active: false,
+                    id: 1
+                },
+            ],
+            label: 'Gym'
+        },
+        {
+            Durations: [
+                {
+                    startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000),
+                    endDate: new Date(new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000),
+                    active: false,
+                    id: 2
+                },
+                {
+                    startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000),
+                    endDate: new Date(new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000),
+                    active: false,
+                    id: 3
+                },
+            ],
+            label: 'School'
+        },
+    ],
+    lastid: 4
+};
 
 interface Action {
     type: string;
-    payload: Array<Data>;
+    payload: UserData;
 }
 
 const dataReducer = (state = INITIAL_STATE, action: Action) => {
     switch (action.type) {
         case 'SET_DATA':
             let setData = action.payload;
-            console.log(setData);
             return setData;
         default:
-            console.log(state);
             return state;
     }
 };
@@ -65,4 +74,4 @@ const timerReducer = (state = INITIAL_STATE_TIMER, action: ActionTimer) => {
     }
 };
 
-export const store = createStore(combineReducers({ Data: dataReducer, Timer: timerReducer }));
+export const store = createStore(combineReducers({ UserData: dataReducer, Timer: timerReducer }));

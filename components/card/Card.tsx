@@ -3,7 +3,7 @@ import { Text, StyleSheet, FlatList, SectionList, SectionListData, ViewStyle } f
 import { View } from 'react-native-animatable';
 import { secondaryColor, mainColor, lightColor, lightSecondaryColor } from '../../screens/colors';
 import Seperator from '../../components/seperator/Seperator';
-import { Data, Dates } from '../../interfaces/Data';
+import { Data, Dates, UserData } from '../../interfaces/Data';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-community/async-storage';
 import Graph from '../../components/graph/Graph';
@@ -11,29 +11,25 @@ import moment from 'moment';
 import { getDuration } from '../../utils/time/duration';
 import { groupDates } from '../../utils/date/date';
 import BackgroundTimer from 'react-native-background-timer';
-import { setTimer, setData } from '../../redux/Actions';
+import { setTimer, setUserData } from '../../redux/Actions';
 import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { connect, MapStateToProps } from 'react-redux';
 
 interface Props {
     data: Data;
-    timerActive: boolean;
-    anyTimerActive: boolean;
+    timerId: number;
     style?: ViewStyle;
     graphTitle?: string;
     graphStyle?: ViewStyle;
-    index: number;
-    Timer?: Array<boolean>;
-    Data?: Array<Data>;
+    UserData?: UserData;
     setTimer: (a: Array<boolean>) => void;
-    setData: (a: Array<Data>) => void;
+    setUserData: (a: UserData) => void;
 }
 
 interface State {
     graph: boolean;
     expanded: boolean;
-    ctr: number;
-    data: Dates | null;
+    active: boolean;
 }
 
 export class Card extends Component<Props, State> {
@@ -42,21 +38,23 @@ export class Card extends Component<Props, State> {
         this.state = {
             graph: false,
             expanded: false,
-            ctr: 0,
-            data: null,
+            active: false
         };
     }
 
+
     getTotal = () => {
         let total = 0;
-        let durations = this.props.data.Durations.map((i) => i.endDate.getTime() - i.startDate.getTime());
+        let filtered = this.props.data.Durations.filter((i) => !i.active);
+        let durations = filtered.map((i) => (i.endDate.getTime() - i.startDate.getTime()))
         for (let i in durations) total += durations[i];
         return moment(new Date(total + new Date().getTimezoneOffset() * 60000)).format('HH:mm:ss');
     };
 
     getAvg = () => {
         let total = 0;
-        let durations = this.props.data.Durations.map((i) => i.endDate.getTime() - i.startDate.getTime());
+        let filtered = this.props.data.Durations.filter((i) => !i.active)
+        let durations = filtered.map((i) => (i.endDate.getTime() - i.startDate.getTime()))
         for (let i in durations) total += durations[i] + new Date().getTimezoneOffset() * 60000;
         return moment(new Date(total / durations.length)).format('HH:mm:ss');
     };
@@ -100,62 +98,63 @@ export class Card extends Component<Props, State> {
         }
     };
 
+    checkIfActiveExists = () => {
+        let { data } = this.props;
+        for (let i in data.Durations) {
+            if (data.Durations[i].active)
+                return true;
+        }
+        return false;
+    }
+
+
     render() {
         if (!this.state.expanded) {
             return (
                 <View style={{ ...styles.card, ...this.props.style, opacity: 1 }}>
                     <View style={styles.cardTopView}>
-                        <Text style={styles.titleText}>{this.props.data.label}</Text>
-                        {!this.props.anyTimerActive || this.props.timerActive ? (
-                            <View style={{ position: 'absolute', right: 0, justifyContent: 'center' }}>
-                                {!this.props.timerActive ? (
+                        <Text style={styles.titleText}>{this.props.data?.label}</Text>
+                        <View style={{ position: 'absolute', right: 0, justifyContent: 'center' }}>
+                            {
+                                !this.state.active ?
                                     <Icon
                                         style={styles.iconChart}
                                         name="play-arrow"
                                         onPress={async () => {
-                                            let t = new Date().getTime() % 10;
-                                            await AsyncStorage.setItem('timer', 'true');
-                                            let Timer = this.props.Timer!.map((i, index) =>
-                                                index === this.props.index ? true : false,
-                                            );
-                                            this.props.setTimer(Timer);
-                                            let ctr = 0;
-                                            let data: Dates = { startDate: new Date(), endDate: new Date() };
-                                            console.log(data);
-                                            BackgroundTimer.runBackgroundTimer(() => {
-                                                ctr++;
-                                                console.log(ctr);
-                                                this.setState({ data });
-                                            }, 1000);
+                                            let { UserData, data } = this.props;
+                                            UserData!.Data.forEach((i) => {
+                                                if (i.label === data.label) {
+                                                    data.Durations.push({ active: true, startDate: new Date(), id: UserData!.lastid, endDate: new Date(0) });
+                                                }
+                                            });
+                                            this.props.setUserData(UserData!);
+                                            await AsyncStorage.setItem('UserData', JSON.stringify(UserData));
+                                            this.setState({active: true});
                                         }}
                                     />
-                                ) : (
+                                    :
                                     <Icon
                                         style={styles.iconChart}
                                         name="pause"
                                         onPress={async () => {
-                                            await AsyncStorage.setItem('timer', 'false');
-                                            let Timer = this.props.Timer!.map((i, index) => false);
-                                            this.props.setTimer(Timer);
-                                            let Data = this.props.Data!;
-                                            for (let i = 0; i < Data.length; i++) {
-                                                if (Data[i].label === this.props.data.label)
-                                                    Data[i].Durations.push({
-                                                        startDate: this.state.data!.startDate,
-                                                        endDate: new Date(),
+                                            let { UserData, data } = this.props;
+                                            UserData!.Data.forEach((i) => {
+                                                if (i.label === data.label) {
+                                                    data.Durations.forEach((i) => {
+                                                        if (i.active) {
+                                                            i.endDate = new Date();
+                                                            i.active = false;
+                                                        }
                                                     });
-                                            }
-                                            console.log(Data);
-                                            this.props.setData(Data);
-                                            BackgroundTimer.stopBackgroundTimer();
+                                                }
+                                            });
+                                            this.props.setUserData(UserData!);
+                                            await AsyncStorage.setItem('UserData', JSON.stringify(UserData));
+                                            this.setState({active: false});
                                         }}
                                     />
-                                )}
-                            </View>
-                        ) : (
-                            <View />
-                        )}
-
+                            }
+                        </View>
                         {this.state.expanded ? (
                             <Icon
                                 style={styles.iconChart}
@@ -163,8 +162,8 @@ export class Card extends Component<Props, State> {
                                 onPress={() => this.setState({ graph: !this.state.graph })}
                             />
                         ) : (
-                            <View />
-                        )}
+                                <View />
+                            )}
                         <Icon
                             style={styles.iconArrow}
                             name="arrow-drop-down"
@@ -177,11 +176,11 @@ export class Card extends Component<Props, State> {
                             <Text style={styles.bottomText}>Start</Text>
                         </View>
                     ) : (
-                        <View style={styles.cardBottomView}>
-                            <Text style={styles.bottomText}>Average: {this.getAvg()}</Text>
-                            <Text style={styles.bottomText}>Total: {this.getTotal()}</Text>
-                        </View>
-                    )}
+                            <View style={styles.cardBottomView}>
+                                <Text style={styles.bottomText}>Average: {this.getAvg()}</Text>
+                                <Text style={styles.bottomText}>Total: {this.getTotal()}</Text>
+                            </View>
+                        )}
                 </View>
             );
         } else {
@@ -196,8 +195,8 @@ export class Card extends Component<Props, State> {
                                 onPress={() => this.setState({ graph: !this.state.graph })}
                             />
                         ) : (
-                            <View />
-                        )}
+                                <View />
+                            )}
                         <Icon
                             style={styles.iconArrow}
                             name="arrow-drop-up"
@@ -211,11 +210,11 @@ export class Card extends Component<Props, State> {
                             <Text style={styles.bottomText}>Start</Text>
                         </View>
                     ) : (
-                        <View style={styles.cardBottomView}>
-                            <Text style={styles.bottomText}>Average: {this.getAvg()}</Text>
-                            <Text style={styles.bottomText}>Total: {this.getTotal()}</Text>
-                        </View>
-                    )}
+                            <View style={styles.cardBottomView}>
+                                <Text style={styles.bottomText}>Average: {this.getAvg()}</Text>
+                                <Text style={styles.bottomText}>Total: {this.getTotal()}</Text>
+                            </View>
+                        )}
                 </View>
             );
         }
@@ -224,15 +223,15 @@ export class Card extends Component<Props, State> {
 
 interface StateRedux {
     Timer: Array<boolean>;
-    Data: Array<Data>;
+    UserData: UserData;
 }
 
 const mapStateToProps = (state: StateRedux) => {
-    const { Timer, Data } = state;
-    return { Timer, Data };
+    const { Timer, UserData } = state;
+    return { Timer, UserData };
 };
 
-const mapDispatchToProps = (dispatch: any) => bindActionCreators({ setTimer, setData }, dispatch);
+const mapDispatchToProps = (dispatch: any) => bindActionCreators({ setTimer, setUserData }, dispatch);
 
 export default connect(
     mapStateToProps,

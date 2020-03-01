@@ -9,8 +9,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Card from '../components/card/Card';
 import { lightColor } from './colors';
-import { Data } from '../interfaces/Data';
-import { setTimer } from '../redux/Actions';
+import { UserData } from '../interfaces/Data';
+import { setTimer, setUserData } from '../redux/Actions';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -20,6 +20,7 @@ interface Props extends StateRedux {
         StackNavigationProp<RootStackParamList>
     >;
     setTimer: (a: Array<boolean>) => void;
+    setUserData: (a: UserData) => void;
 }
 
 export class HomeScreen extends Component<Props> {
@@ -37,34 +38,26 @@ export class HomeScreen extends Component<Props> {
                 );
             },
         });
-        let timer = await AsyncStorage.getItem('timer');
-        console.log('Timer: ' + timer);
-        if (timer !== null) {
-            if (timer === 'false') this.props.setTimer(this.props.Data.map(() => false));
-            else if (timer === 'true') this.props.setTimer(this.props.Data.map(() => true));
+        let datastr = await AsyncStorage.getItem('UserData');
+        let data = datastr === null ? null : JSON.parse(datastr);
+        if(data !== null){
+            for(let i=0; i<data!.Data.length; i++){
+                for(let j=0; j<data.Data[i].Durations.length; j++){
+                    data.Data[i].Durations[j].startDate = new Date(data.Data[i].Durations[j].startDate);
+                    data.Data[i].Durations[j].endDate = new Date(data.Data[i].Durations[j].endDate);
+                }
+            }
         }
+        this.props.setUserData(data);
     }
 
-    anyTimerActive = () => {
-        const { Timer } = this.props;
-        const len = Timer.length;
-        for (let i = 0; i < len; i++) {
-            if (Timer[i] === true) return true;
-        }
-        return false;
-    };
-
     render() {
-        console.log(this.props.Timer);
         return (
             <ScrollView>
                 <View style={{ marginTop: 12 }}>
-                    {this.props.Data.map((i, index) => (
+                    {this.props.UserData.Data.map((i, index) => (
                         <Card
-                            timerActive={this.props.Timer[index]}
-                            anyTimerActive={this.anyTimerActive()}
                             data={i}
-                            index={index}
                         />
                     ))}
                 </View>
@@ -74,16 +67,16 @@ export class HomeScreen extends Component<Props> {
 }
 
 interface StateRedux {
-    Data: Array<Data>;
+    UserData: UserData;
     Timer: Array<boolean>;
 }
 
 const mapStateToProps = (state: StateRedux) => {
-    const { Data, Timer } = state;
-    return { Data, Timer };
+    const { UserData, Timer } = state;
+    return { UserData, Timer };
 };
 
-const mapDispatchToProps = (dispatch: any) => bindActionCreators({ setTimer }, dispatch);
+const mapDispatchToProps = (dispatch: any) => bindActionCreators({ setTimer, setUserData }, dispatch);
 
 export default connect(
     mapStateToProps,
