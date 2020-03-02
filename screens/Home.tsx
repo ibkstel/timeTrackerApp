@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Card from '../components/card/Card';
 import { lightColor } from './colors';
-import { UserData } from '../interfaces/Data';
+import { UserData, Data } from '../interfaces/Data';
 import { setTimer, setUserData } from '../redux/Actions';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -51,15 +51,15 @@ export class HomeScreen extends Component<Props> {
         }
     }
 
-/*     sortData =() => {
-        let UserData = this.props.UserData;
-        UserData!.Data.reverse().forEach((i) => {
-            for(let j=0; j<i.Durations.length; j++){
-                UserData!.Data = UserData!.Data.reverse();                                                        
-            }
-        });
-        return UserData;
-    } */
+    sortData = (data: Data) => {
+        let sorted = {...data};
+        for (let i = 0; i < data.Durations.length; i++) {
+            sorted.Durations = data.Durations.sort((a, b) => b.id - a.id);
+        }
+        return sorted;
+    }
+
+
 
     render() {
         return (
@@ -67,7 +67,7 @@ export class HomeScreen extends Component<Props> {
                 <View style={{ marginTop: 12 }}>
                     {this.props.UserData.Data.map((i, index) => (
                         <Card
-                            data={i}
+                            data={this.sortData(i)}
                         />
                     ))}
                 </View>
