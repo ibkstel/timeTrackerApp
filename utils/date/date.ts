@@ -34,11 +34,9 @@ export const sameDate = (date1: Date, date2: Date) => {
 export const groupDates = (dates: Data) => {
     let sections = [];
     const Durations = dates.Durations.filter((i) => !i.active);
-    console.log(Durations);
     let i = 0;
     while (i < Durations.length) {
         let date = Durations[i];
-        console.log(date);
         let obj = {
             title: moment(date.startDate).format('DD:MM:YYYY'),
             data: [date],
@@ -46,7 +44,6 @@ export const groupDates = (dates: Data) => {
         i++;
         while (i < Durations.length && sameDay(date.startDate, Durations[i].startDate)) {
             obj.data.push(Durations[i]);
-            console.log(Durations[i]);
             i++;
         }
         sections.push(obj);

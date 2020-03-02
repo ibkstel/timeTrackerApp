@@ -102,16 +102,6 @@ export class Card extends Component<Props, State> {
         }
     };
 
-    checkIfActiveExists = () => {
-        let { data } = this.props;
-        for (let i in data.Durations) {
-            if (data.Durations[i].active)
-                return true;
-        }
-        return false;
-    }
-
-
     getActive = () => {
         let Durations = this.props.data.Durations;
         for (let i = 0; i < Durations.length; i++) {
@@ -123,7 +113,7 @@ export class Card extends Component<Props, State> {
 
     printDuration = () => {
         if (this.getActive() !== undefined) {
-            this.setState({ activeDuration: getDuration(this.getActive()!.startDate, new Date(new Date().getTime() + new Date().getTimezoneOffset() + 1000)) }, () => {
+            this.setState({ active: true, activeDuration: getDuration(this.getActive()!.startDate, new Date(new Date().getTime() + new Date().getTimezoneOffset() + 1000)) }, () => {
                 let intervalid = setInterval(() => {
                     if (this.getActive() !== undefined)
                         this.setState({ intervalid: intervalid, activeDuration: getDuration(this.getActive()!.startDate, new Date(new Date().getTime() + new Date().getTimezoneOffset() + 1000)) });
@@ -135,6 +125,21 @@ export class Card extends Component<Props, State> {
 
     componentDidMount() {
         if (this.state.active)
+            this.printDuration();
+    }
+
+
+    checkIfActiveExists = (data: Data) => {
+        for (let i in data.Durations) {
+            if (data.Durations[i].active) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    componentDidUpdate(props: Props) {
+        if (this.checkIfActiveExists(this.props.data) && this.state.active !== true)
             this.printDuration();
     }
 
@@ -158,7 +163,6 @@ export class Card extends Component<Props, State> {
                                                 }
                                             });
                                             UserData!.lastid++;
-                                            console.log(data.Durations);
                                             this.props.setUserData(UserData!);
                                             await AsyncStorage.setItem('UserData', JSON.stringify(UserData));
                                             this.setState({ active: true }, () => this.printDuration());
@@ -168,30 +172,29 @@ export class Card extends Component<Props, State> {
                                     <Icon
                                         style={styles.iconChart}
                                         name="pause"
-                                        onPress={() => {
+                                        onPress={async () => {
                                             if (this.state.intervalid !== 0)
                                                 clearInterval(this.state.intervalid);
-                                            this.setState({ active: false }, async () => {
-                                                let { UserData, data } = this.props;
-                                                UserData!.Data.forEach((i) => {
-                                                    if (i.label === data.label) {
-                                                        data.Durations.forEach((i) => {
-                                                            if (i.active) {
-                                                                console.log(getDiff(i.startDate, new Date()));
-                                                                if (getDiff(i.startDate, new Date()) < 1000) {
-                                                                    data.Durations.splice(data.Durations.indexOf(i));
-                                                                }  
-                                                                else {
-                                                                    i.endDate = new Date();
-                                                                    i.active = false;
-                                                                }
+                                            let { UserData, data } = this.props;
+                                            UserData!.Data.forEach((i) => {
+                                                if (i.label === data.label) {
+                                                    data.Durations.forEach((i) => {
+                                                        if (i.active) {
+                                                            if (getDiff(i.startDate, new Date()) < 1000) {
+                                                                data.Durations.splice(data.Durations.indexOf(i));
                                                             }
-                                                        });
-                                                    }
-                                                });
-                                                this.props.setUserData(UserData!);
-                                                await AsyncStorage.setItem('UserData', JSON.stringify(UserData));
+                                                            else {
+                                                                i.endDate = new Date();
+                                                                i.active = false;
+                                                            }
+                                                        }
+                                                    });
+                                                    data.Durations = data.Durations.sort((a, b) => b.id - a.id);
+                                                }
                                             });
+                                            this.props.setUserData(UserData!);
+                                            await AsyncStorage.setItem('UserData', JSON.stringify(UserData));
+                                            this.setState({ active: false });
                                         }}
                                     />
                             }
