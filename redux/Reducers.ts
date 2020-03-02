@@ -53,6 +53,7 @@ const dataReducer = (state = INITIAL_STATE, action: Action) => {
             let setData = action.payload;
             return setData;
         default:
+            console.log(state)
             return state;
     }
 };

@@ -13,13 +13,14 @@ interface Props {
 const randomColor = () => ('#' + ((Math.random() * 0xffffff) << 0).toString(16) + '000000').slice(0, 7);
 
 export class Graph extends Component<Props> {
+    
     render() {
         return (
             <PieChart
                 style={{ height: 200, ...this.props.style }}
                 svg={{ fill: lightColor }}
                 contentInset={{ top: 30, bottom: 30 }}
-                data={this.props.data.Durations.map((i) => getDiff(i.startDate, i.endDate)).map((value, index) => ({
+                data={this.props.data.Durations.filter((i) => !i.active).map((i) => getDiff(i.startDate, i.endDate)).map((value, index) => ({
                     value,
                     svg: {
                         fill: randomColor(),

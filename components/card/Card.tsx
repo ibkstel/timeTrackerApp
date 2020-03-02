@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-community/async-storage';
 import Graph from '../../components/graph/Graph';
 import moment from 'moment';
-import { getDuration } from '../../utils/time/duration';
+import { getDiff, getDuration } from '../../utils/time/duration';
 import { groupDates } from '../../utils/date/date';
 import BackgroundTimer from 'react-native-background-timer';
 import { setTimer, setUserData } from '../../redux/Actions';
@@ -30,6 +30,8 @@ interface State {
     graph: boolean;
     expanded: boolean;
     active: boolean;
+    activeDuration: number;
+    intervalid: number;
 }
 
 export class Card extends Component<Props, State> {
@@ -38,7 +40,9 @@ export class Card extends Component<Props, State> {
         this.state = {
             graph: false,
             expanded: false,
-            active: false
+            active: false,
+            activeDuration: 0,
+            intervalid: 0
         };
     }
 
@@ -108,6 +112,32 @@ export class Card extends Component<Props, State> {
     }
 
 
+    getActive = () => {
+        let Durations = this.props.data.Durations;
+        for (let i = 0; i < Durations.length; i++) {
+            if (Durations[i].active) {
+                return Durations[i];
+            }
+        }
+    }
+
+    printDuration = () => {
+        if (this.getActive() !== undefined) {
+            this.setState({ activeDuration: getDuration(this.getActive()!.startDate, new Date(new Date().getTime() + new Date().getTimezoneOffset() + 1000)) }, () => {
+                let intervalid = setInterval(() => {
+                    if (this.getActive() !== undefined)
+                        this.setState({ intervalid: intervalid, activeDuration: getDuration(this.getActive()!.startDate, new Date(new Date().getTime() + new Date().getTimezoneOffset() + 1000)) });
+                }, 1000);
+            });
+        }
+    }
+
+
+    componentDidMount() {
+        if (this.state.active)
+            this.printDuration();
+    }
+
     render() {
         if (!this.state.expanded) {
             return (
@@ -127,30 +157,41 @@ export class Card extends Component<Props, State> {
                                                     data.Durations.push({ active: true, startDate: new Date(), id: UserData!.lastid, endDate: new Date(0) });
                                                 }
                                             });
+                                            UserData!.lastid++;
+                                            console.log(data.Durations);
                                             this.props.setUserData(UserData!);
                                             await AsyncStorage.setItem('UserData', JSON.stringify(UserData));
-                                            this.setState({active: true});
+                                            this.setState({ active: true }, () => this.printDuration());
                                         }}
                                     />
                                     :
                                     <Icon
                                         style={styles.iconChart}
                                         name="pause"
-                                        onPress={async () => {
-                                            let { UserData, data } = this.props;
-                                            UserData!.Data.forEach((i) => {
-                                                if (i.label === data.label) {
-                                                    data.Durations.forEach((i) => {
-                                                        if (i.active) {
-                                                            i.endDate = new Date();
-                                                            i.active = false;
-                                                        }
-                                                    });
-                                                }
+                                        onPress={() => {
+                                            if (this.state.intervalid !== 0)
+                                                clearInterval(this.state.intervalid);
+                                            this.setState({ active: false }, async () => {
+                                                let { UserData, data } = this.props;
+                                                UserData!.Data.forEach((i) => {
+                                                    if (i.label === data.label) {
+                                                        data.Durations.forEach((i) => {
+                                                            if (i.active) {
+                                                                console.log(getDiff(i.startDate, new Date()));
+                                                                if (getDiff(i.startDate, new Date()) < 1000) {
+                                                                    data.Durations.splice(data.Durations.indexOf(i));
+                                                                }  
+                                                                else {
+                                                                    i.endDate = new Date();
+                                                                    i.active = false;
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                                this.props.setUserData(UserData!);
+                                                await AsyncStorage.setItem('UserData', JSON.stringify(UserData));
                                             });
-                                            this.props.setUserData(UserData!);
-                                            await AsyncStorage.setItem('UserData', JSON.stringify(UserData));
-                                            this.setState({active: false});
                                         }}
                                     />
                             }
@@ -171,6 +212,16 @@ export class Card extends Component<Props, State> {
                         />
                     </View>
                     <Seperator />
+                    {this.state.active ?
+                        <View>
+                            <View animation="fadeIn" duration={600} style={styles.cardMidView}>
+                                <Text>{moment(new Date(this.state.activeDuration)).format('HH:mm:ss')}</Text>
+                            </View>
+                            <Seperator />
+                        </View>
+                        :
+                        <View />
+                    }
                     {this.props.data.Durations.length === 0 ? (
                         <View style={styles.cardBottomView}>
                             <Text style={styles.bottomText}>Start</Text>
@@ -203,6 +254,17 @@ export class Card extends Component<Props, State> {
                             onPress={() => this.setState({ expanded: !this.state.expanded })}
                         />
                     </View>
+                    <Seperator />
+                    {this.state.active ?
+                        <View>
+                            <View animation="fadeIn" duration={600} style={styles.cardMidView}>
+                                <Text>{moment(new Date(this.state.activeDuration)).format('HH:mm:ss')}</Text>
+                            </View>
+                            <Seperator />
+                        </View>
+                        :
+                        <View />
+                    }
                     <Seperator />
                     {this.details()}
                     {this.props.data.Durations.length === 0 ? (

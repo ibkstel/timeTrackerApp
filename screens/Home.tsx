@@ -40,16 +40,26 @@ export class HomeScreen extends Component<Props> {
         });
         let datastr = await AsyncStorage.getItem('UserData');
         let data = datastr === null ? null : JSON.parse(datastr);
-        if(data !== null){
-            for(let i=0; i<data!.Data.length; i++){
-                for(let j=0; j<data.Data[i].Durations.length; j++){
+        if (data !== null) {
+            for (let i = 0; i < data!.Data.length; i++) {
+                for (let j = 0; j < data.Data[i].Durations.length; j++) {
                     data.Data[i].Durations[j].startDate = new Date(data.Data[i].Durations[j].startDate);
                     data.Data[i].Durations[j].endDate = new Date(data.Data[i].Durations[j].endDate);
                 }
             }
+            this.props.setUserData(data);
         }
-        this.props.setUserData(data);
     }
+
+/*     sortData =() => {
+        let UserData = this.props.UserData;
+        UserData!.Data.reverse().forEach((i) => {
+            for(let j=0; j<i.Durations.length; j++){
+                UserData!.Data = UserData!.Data.reverse();                                                        
+            }
+        });
+        return UserData;
+    } */
 
     render() {
         return (
