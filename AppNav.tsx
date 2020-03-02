@@ -8,12 +8,14 @@ import SecondScreen from './screens/Second';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import CategoriesScreen from './screens/Category';
 
 const Stack = createStackNavigator();
 
 export type RootStackParamList = {
     Home: undefined;
     Second: undefined;
+    Categories: undefined;
 };
 
 function StackScreen() {
@@ -32,6 +34,7 @@ function StackScreen() {
                 name="Home"
                 component={HomeScreen}
             />
+            <Stack.Screen name="Categories" component={CategoriesScreen} />
             <Stack.Screen name="Second" component={SecondScreen} />
         </Stack.Navigator>
     );
@@ -54,6 +57,15 @@ function TabScreen() {
                 options={() => ({
                     tabBarIcon: ({ color, size }: any) => {
                         return <Icon name="home" size={size} color={color} />;
+                    },
+                })}
+            />
+            <Tab.Screen
+                name="Categories"
+                component={CategoriesScreen}
+                options={() => ({
+                    tabBarIcon: ({ color, size }: any) => {
+                        return <Icon name="view-list" size={size} color={color} />;
                     },
                 })}
             />

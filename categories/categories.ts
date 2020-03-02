@@ -1,7 +1,9 @@
-interface category {
+export interface category {
     name:string,
     icon:string,
 }
+
+
 
 export const categories: Array<category> = [
     {
