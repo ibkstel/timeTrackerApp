@@ -1,8 +1,4 @@
 import { createStore, combineReducers } from 'redux';
-<<<<<<< Updated upstream
-import {} from 'react-redux';
-=======
->>>>>>> Stashed changes
 import { UserData } from '../interfaces/Data';
 
 const INITIAL_STATE: UserData = {
