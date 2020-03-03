@@ -7,28 +7,24 @@ interface Props {
     category: Category;
 }
 
-interface State { }
+interface State {}
 
 export class CategoryCard extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
     }
 
-
     render() {
         return (
             <View>
                 <View style={styles.categoryCard}>
-
                     <Icon name={this.props.category.icon} style={styles.icon} />
                     <Text style={styles.text}>{this.props.category.name} </Text>
-
                 </View>
             </View>
         );
     }
 }
-
 
 const styles = StyleSheet.create({
     categoryCard: {

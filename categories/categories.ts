@@ -228,37 +228,37 @@ export const categories: Array<Category> = [
     {
         name: 'Transportation',
         sublabel: transportationSubLabel,
-        labelColor: '',
+        labelColor: 'blue',
         icon: 'directions-bus',
     },
     {
         name: 'Activity',
         sublabel: activitySubLabel,
-        labelColor: '',
+        labelColor: 'red',
         icon: 'directions-bus',
     },
     {
         name: 'Social',
         sublabel: socialSubLabel,
-        labelColor: '',
+        labelColor: 'yellow',
         icon: 'people-outline',
     },
     {
         name: 'Gym',
         sublabel: gymSubLabel,
-        labelColor: '',
+        labelColor: 'green',
         icon: 'fitness-center',
     },
     {
         name: 'School',
         sublabel: schoolSubLabel,
-        labelColor: '',
+        labelColor: 'purple',
         icon: 'school',
     },
     {
         name: 'Shopping',
         sublabel: shoppingSubLabel,
-        labelColor: '',
+        labelColor: 'pink',
         icon: 'shop',
     },
 ];
