@@ -3,18 +3,22 @@ import { Category } from '../interfaces/Category';
 export const categories: Array<Category> = [
     {
         name: 'Transportation',
-        icon: '',
+        icon: 'directions-bus',
     },
     {
         name: 'Social',
-        icon: '',
+        icon: 'people-outline',
     },
     {
         name: 'Gym',
-        icon: '',
+        icon: 'fitness-center',
     },
     {
         name: 'School',
-        icon: '',
+        icon: 'school',
     },
+    {
+        name:'Shopping',
+        icon: 'shop'
+    }
 ];
