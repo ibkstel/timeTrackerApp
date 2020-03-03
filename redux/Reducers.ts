@@ -1,5 +1,5 @@
 import { createStore, combineReducers } from 'redux';
-import { } from 'react-redux';
+import {} from 'react-redux';
 import { UserData } from '../interfaces/Data';
 
 const INITIAL_STATE: UserData = {
@@ -8,18 +8,20 @@ const INITIAL_STATE: UserData = {
             Durations: [
                 {
                     startDate: new Date(-86400000 + new Date().getTime() + new Date().getTimezoneOffset() * 60000),
-                    endDate: new Date(-86400000 + new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000),
+                    endDate: new Date(
+                        -86400000 + new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000,
+                    ),
                     active: false,
-                    id: 0
+                    id: 0,
                 },
                 {
                     startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000),
                     endDate: new Date(new Date().getTime() + 200000 + new Date().getTimezoneOffset() * 60000),
                     active: false,
-                    id: 1
+                    id: 1,
                 },
             ],
-            label: 'Gym'
+            label: 'Gym',
         },
         {
             Durations: [
@@ -27,19 +29,19 @@ const INITIAL_STATE: UserData = {
                     startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000),
                     endDate: new Date(new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000),
                     active: false,
-                    id: 2
+                    id: 2,
                 },
                 {
                     startDate: new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000),
                     endDate: new Date(new Date().getTime() + 100000 + new Date().getTimezoneOffset() * 60000),
                     active: false,
-                    id: 3
+                    id: 3,
                 },
             ],
-            label: 'School'
+            label: 'School',
         },
     ],
-    lastid: 4
+    lastid: 4,
 };
 
 interface Action {

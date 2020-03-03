@@ -52,23 +52,19 @@ export class HomeScreen extends Component<Props> {
     }
 
     sortData = (data: Data) => {
-        let sorted = {...data};
+        let sorted = { ...data };
         for (let i = 0; i < data.Durations.length; i++) {
             sorted.Durations = data.Durations.sort((a, b) => b.id - a.id);
         }
         return sorted;
-    }
-
-
+    };
 
     render() {
         return (
             <ScrollView>
                 <View style={{ marginTop: 12 }}>
                     {this.props.UserData.Data.map((i, index) => (
-                        <Card
-                            data={this.sortData(i)}
-                        />
+                        <Card data={this.sortData(i)} />
                     ))}
                 </View>
             </ScrollView>

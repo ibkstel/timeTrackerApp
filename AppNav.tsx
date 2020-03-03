@@ -40,6 +40,26 @@ function StackScreen() {
     );
 }
 
+function StackCategory() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: { backgroundColor: mainColor, elevation: 1 },
+                headerTintColor: lightColor,
+            }}>
+            <Stack.Screen
+                options={{
+                    headerLeft: (props) => {
+                        return <View {...props} />;
+                    },
+                }}
+                name="Categories"
+                component={CategoriesScreen}
+            />
+        </Stack.Navigator>
+    );
+}
+
 const Tab = createBottomTabNavigator();
 
 function TabScreen() {
@@ -62,7 +82,7 @@ function TabScreen() {
             />
             <Tab.Screen
                 name="Categories"
-                component={CategoriesScreen}
+                component={StackCategory}
                 options={() => ({
                     tabBarIcon: ({ color, size }: any) => {
                         return <Icon name="view-list" size={size} color={color} />;
