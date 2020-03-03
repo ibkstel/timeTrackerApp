@@ -1,31 +1,34 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { category } from 'categories/categories';
-import { mainColor, secondaryColor } from '../../screens/colors';
+import { Category } from '../../interfaces/Category';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 interface Props {
-    category: category;
+    category: Category;
 }
 
-interface State {}
+interface State { }
 
 export class CategoryCard extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
     }
 
+
     render() {
         return (
             <View>
                 <View style={styles.categoryCard}>
+
                     <Icon name={this.props.category.icon} style={styles.icon} />
                     <Text style={styles.text}>{this.props.category.name} </Text>
+
                 </View>
             </View>
         );
     }
 }
+
 
 const styles = StyleSheet.create({
     categoryCard: {

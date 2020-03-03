@@ -1,27 +1,20 @@
-export interface category {
-    name: string;
-    icon: string;
-}
+import { Category } from '../interfaces/Category';
 
-export const categories: Array<category> = [
+export const categories: Array<Category> = [
     {
         name: 'Transportation',
-        icon: 'directions-bus',
+        icon: '',
     },
     {
         name: 'Social',
-        icon: 'people-outline',
+        icon: '',
     },
     {
         name: 'Gym',
-        icon: 'fitness-center',
+        icon: '',
     },
     {
         name: 'School',
-        icon: 'school',
-    },
-    {
-        name: 'Shopping',
-        icon: 'shop',
+        icon: '',
     },
 ];

@@ -7,13 +7,13 @@ import { Data, Dates, UserData } from '../../interfaces/Data';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-community/async-storage';
 import Graph from '../../components/graph/Graph';
+import PushNotification from 'react-native-push-notification';
 import moment from 'moment';
 import { getDiff, getDuration } from '../../utils/time/duration';
 import { groupDates } from '../../utils/date/date';
-import BackgroundTimer from 'react-native-background-timer';
 import { setTimer, setUserData } from '../../redux/Actions';
 import { bindActionCreators } from 'redux';
-import { connect, MapStateToProps } from 'react-redux';
+import { connect } from 'react-redux';
 
 interface Props {
     data: Data;
@@ -42,23 +42,22 @@ export class Card extends Component<Props, State> {
             expanded: false,
             active: false,
             activeDuration: 0,
-            intervalid: 0
+            intervalid: 0,
         };
     }
-
 
     getTotal = () => {
         let total = 0;
         let filtered = this.props.data.Durations.filter((i) => !i.active);
-        let durations = filtered.map((i) => (i.endDate.getTime() - i.startDate.getTime()))
+        let durations = filtered.map((i) => i.endDate.getTime() - i.startDate.getTime());
         for (let i in durations) total += durations[i];
         return moment(new Date(total + new Date().getTimezoneOffset() * 60000)).format('HH:mm:ss');
     };
 
     getAvg = () => {
         let total = 0;
-        let filtered = this.props.data.Durations.filter((i) => !i.active)
-        let durations = filtered.map((i) => (i.endDate.getTime() - i.startDate.getTime()))
+        let filtered = this.props.data.Durations.filter((i) => !i.active);
+        let durations = filtered.map((i) => i.endDate.getTime() - i.startDate.getTime());
         for (let i in durations) total += durations[i] + new Date().getTimezoneOffset() * 60000;
         return moment(new Date(total / durations.length)).format('HH:mm:ss');
     };
@@ -109,25 +108,100 @@ export class Card extends Component<Props, State> {
                 return Durations[i];
             }
         }
-    }
+    };
 
     printDuration = () => {
         if (this.getActive() !== undefined) {
-            this.setState({ active: true, activeDuration: getDuration(this.getActive()!.startDate, new Date(new Date().getTime() + new Date().getTimezoneOffset() + 1000)) }, () => {
-                let intervalid = setInterval(() => {
-                    if (this.getActive() !== undefined)
-                        this.setState({ intervalid: intervalid, activeDuration: getDuration(this.getActive()!.startDate, new Date(new Date().getTime() + new Date().getTimezoneOffset() + 1000)) });
-                }, 1000);
-            });
+            this.setState(
+                {
+                    active: true,
+                    activeDuration: getDuration(
+                        this.getActive()!.startDate,
+                        new Date(new Date().getTime() + new Date().getTimezoneOffset() + 1000),
+                    ),
+                },
+                () => {
+                    let intervalid = setInterval(() => {
+                        if (this.getActive() !== undefined)
+                            this.setState({
+                                intervalid: intervalid,
+                                activeDuration: getDuration(
+                                    this.getActive()!.startDate,
+                                    new Date(new Date().getTime() + new Date().getTimezoneOffset() + 1000),
+                                ),
+                            });
+                    }, 1000);
+                },
+            );
         }
-    }
+    };
 
+    startPauseIcon = () => (
+        <View style={{ justifyContent: 'center' }}>
+            {!this.state.active ? (
+                <Icon
+                    style={styles.iconChart}
+                    name="play-arrow"
+                    onPress={async () => {
+                        let { UserData, data } = this.props;
+                        UserData!.Data.forEach((i) => {
+                            if (i.label === data.label) {
+                                data.Durations.push({
+                                    active: true,
+                                    startDate: new Date(),
+                                    id: UserData!.lastid,
+                                    endDate: new Date(0),
+                                });
+                            }
+                        });
+                        UserData!.lastid++;
+                        this.props.setUserData(UserData!);
+                        await AsyncStorage.setItem('UserData', JSON.stringify(UserData));
+                        PushNotification.localNotification({
+                            id: (UserData!.lastid - 1).toString(),
+                            message: this.props.data.label,
+                            ongoing: true,
+                            repeatType: 'minute',
+                        });
+                        this.setState({ active: true }, () => this.printDuration());
+                    }}
+                />
+            ) : (
+                <Icon
+                    style={styles.iconChart}
+                    name="pause"
+                    onPress={async () => {
+                        if (this.state.intervalid !== 0) clearInterval(this.state.intervalid);
+                        let { UserData, data } = this.props;
+                        let activeProcess = this.getActiveProcess()!;
+                        UserData!.Data.forEach((i) => {
+                            if (i.label === data.label) {
+                                data.Durations.forEach((i) => {
+                                    if (i.active) {
+                                        if (getDiff(i.startDate, new Date()) < 1000) {
+                                            data.Durations.splice(data.Durations.indexOf(i));
+                                        } else {
+                                            i.endDate = new Date();
+                                            i.active = false;
+                                        }
+                                    }
+                                });
+                                data.Durations = data.Durations.sort((a, b) => b.id - a.id);
+                            }
+                        });
+                        PushNotification.cancelLocalNotifications({ id: activeProcess.id.toString() });
+                        this.props.setUserData(UserData!);
+                        await AsyncStorage.setItem('UserData', JSON.stringify(UserData));
+                        this.setState({ active: false });
+                    }}
+                />
+            )}
+        </View>
+    );
 
     componentDidMount() {
-        if (this.state.active)
-            this.printDuration();
+        if (this.state.active) this.printDuration();
     }
-
 
     checkIfActiveExists = (data: Data) => {
         for (let i in data.Durations) {
@@ -136,12 +210,17 @@ export class Card extends Component<Props, State> {
             }
             return false;
         }
-    }
+    };
 
     componentDidUpdate(props: Props) {
-        if (this.checkIfActiveExists(this.props.data) && this.state.active !== true)
-            this.printDuration();
+        if (this.checkIfActiveExists(this.props.data) && this.state.active !== true) this.printDuration();
     }
+
+    getActiveProcess = () => {
+        for (let i = 0; i < this.props.data.Durations.length; i++) {
+            if (this.props.data.Durations[i].active) return this.props.data.Durations[i];
+        }
+    };
 
     render() {
         if (!this.state.expanded) {
@@ -150,54 +229,7 @@ export class Card extends Component<Props, State> {
                     <View style={styles.cardTopView}>
                         <Text style={styles.titleText}>{this.props.data?.label}</Text>
                         <View style={{ position: 'absolute', right: 0, justifyContent: 'center' }}>
-                            {
-                                !this.state.active ?
-                                    <Icon
-                                        style={styles.iconChart}
-                                        name="play-arrow"
-                                        onPress={async () => {
-                                            let { UserData, data } = this.props;
-                                            UserData!.Data.forEach((i) => {
-                                                if (i.label === data.label) {
-                                                    data.Durations.push({ active: true, startDate: new Date(), id: UserData!.lastid, endDate: new Date(0) });
-                                                }
-                                            });
-                                            UserData!.lastid++;
-                                            this.props.setUserData(UserData!);
-                                            await AsyncStorage.setItem('UserData', JSON.stringify(UserData));
-                                            this.setState({ active: true }, () => this.printDuration());
-                                        }}
-                                    />
-                                    :
-                                    <Icon
-                                        style={styles.iconChart}
-                                        name="pause"
-                                        onPress={async () => {
-                                            if (this.state.intervalid !== 0)
-                                                clearInterval(this.state.intervalid);
-                                            let { UserData, data } = this.props;
-                                            UserData!.Data.forEach((i) => {
-                                                if (i.label === data.label) {
-                                                    data.Durations.forEach((i) => {
-                                                        if (i.active) {
-                                                            if (getDiff(i.startDate, new Date()) < 1000) {
-                                                                data.Durations.splice(data.Durations.indexOf(i));
-                                                            }
-                                                            else {
-                                                                i.endDate = new Date();
-                                                                i.active = false;
-                                                            }
-                                                        }
-                                                    });
-                                                    data.Durations = data.Durations.sort((a, b) => b.id - a.id);
-                                                }
-                                            });
-                                            this.props.setUserData(UserData!);
-                                            await AsyncStorage.setItem('UserData', JSON.stringify(UserData));
-                                            this.setState({ active: false });
-                                        }}
-                                    />
-                            }
+                            {this.startPauseIcon()}
                         </View>
                         {this.state.expanded ? (
                             <Icon
@@ -206,8 +238,8 @@ export class Card extends Component<Props, State> {
                                 onPress={() => this.setState({ graph: !this.state.graph })}
                             />
                         ) : (
-                                <View />
-                            )}
+                            <View />
+                        )}
                         <Icon
                             style={styles.iconArrow}
                             name="arrow-drop-down"
@@ -215,26 +247,26 @@ export class Card extends Component<Props, State> {
                         />
                     </View>
                     <Seperator />
-                    {this.state.active ?
+                    {this.state.active ? (
                         <View>
                             <View animation="fadeIn" duration={600} style={styles.cardMidView}>
                                 <Text>{moment(new Date(this.state.activeDuration)).format('HH:mm:ss')}</Text>
                             </View>
                             <Seperator />
                         </View>
-                        :
+                    ) : (
                         <View />
-                    }
+                    )}
                     {this.props.data.Durations.length === 0 ? (
                         <View style={styles.cardBottomView}>
                             <Text style={styles.bottomText}>Start</Text>
                         </View>
                     ) : (
-                            <View style={styles.cardBottomView}>
-                                <Text style={styles.bottomText}>Average: {this.getAvg()}</Text>
-                                <Text style={styles.bottomText}>Total: {this.getTotal()}</Text>
-                            </View>
-                        )}
+                        <View style={styles.cardBottomView}>
+                            <Text style={styles.bottomText}>Average: {this.getAvg()}</Text>
+                            <Text style={styles.bottomText}>Total: {this.getTotal()}</Text>
+                        </View>
+                    )}
                 </View>
             );
         } else {
@@ -242,6 +274,9 @@ export class Card extends Component<Props, State> {
                 <View style={{ ...styles.card, ...this.props.style, opacity: 1 }}>
                     <View style={styles.cardTopView}>
                         <Text style={styles.titleText}>{this.props.data.label}</Text>
+                        <View style={{ position: 'absolute', right: 30, justifyContent: 'center' }}>
+                            {this.startPauseIcon()}
+                        </View>
                         {this.state.expanded ? (
                             <Icon
                                 style={styles.iconChart}
@@ -249,8 +284,8 @@ export class Card extends Component<Props, State> {
                                 onPress={() => this.setState({ graph: !this.state.graph })}
                             />
                         ) : (
-                                <View />
-                            )}
+                            <View />
+                        )}
                         <Icon
                             style={styles.iconArrow}
                             name="arrow-drop-up"
@@ -258,16 +293,16 @@ export class Card extends Component<Props, State> {
                         />
                     </View>
                     <Seperator />
-                    {this.state.active ?
+                    {this.state.active ? (
                         <View>
                             <View animation="fadeIn" duration={600} style={styles.cardMidView}>
                                 <Text>{moment(new Date(this.state.activeDuration)).format('HH:mm:ss')}</Text>
                             </View>
                             <Seperator />
                         </View>
-                        :
+                    ) : (
                         <View />
-                    }
+                    )}
                     <Seperator />
                     {this.details()}
                     {this.props.data.Durations.length === 0 ? (
@@ -275,11 +310,11 @@ export class Card extends Component<Props, State> {
                             <Text style={styles.bottomText}>Start</Text>
                         </View>
                     ) : (
-                            <View style={styles.cardBottomView}>
-                                <Text style={styles.bottomText}>Average: {this.getAvg()}</Text>
-                                <Text style={styles.bottomText}>Total: {this.getTotal()}</Text>
-                            </View>
-                        )}
+                        <View style={styles.cardBottomView}>
+                            <Text style={styles.bottomText}>Average: {this.getAvg()}</Text>
+                            <Text style={styles.bottomText}>Total: {this.getTotal()}</Text>
+                        </View>
+                    )}
                 </View>
             );
         }
@@ -298,10 +333,7 @@ const mapStateToProps = (state: StateRedux) => {
 
 const mapDispatchToProps = (dispatch: any) => bindActionCreators({ setTimer, setUserData }, dispatch);
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(Card);
+export default connect(mapStateToProps, mapDispatchToProps)(Card);
 
 const styles = StyleSheet.create({
     card: {

@@ -34,8 +34,6 @@ function StackScreen() {
                 name="Home"
                 component={HomeScreen}
             />
-            <Stack.Screen name="Categories" component={CategoriesScreen} />
-            <Stack.Screen name="Second" component={SecondScreen} />
         </Stack.Navigator>
     );
 }
@@ -90,7 +88,7 @@ function TabScreen() {
                 })}
             />
             <Tab.Screen
-                name="Settings"
+                name="Profile"
                 component={SecondScreen}
                 options={() => ({
                     tabBarIcon: ({ color, size }: any) => {

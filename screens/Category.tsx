@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { categories } from '../categories/categories';
-import { CategoryCard } from '../components/categorycard/categorycard';
+import { CategoryCard } from '../components/categorycard/CategoryCard';
 
 export class CategoriesScreen extends Component {
     render() {
