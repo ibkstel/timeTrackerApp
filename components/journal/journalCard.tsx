@@ -12,7 +12,14 @@ interface Props {
 
 class JournalCard extends Component {
     render() {
-        return <View></View>;
+        return <View>
+            
+        </View>;
     }
 }
-const style = StyleSheet.create({});
+const style = StyleSheet.create({
+
+    journalCard: {
+
+    }
+});
