@@ -13,18 +13,19 @@ import ProfileScreen from './screens/Profile';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import JournalScreen from './screens/Journal';
 import ProfileEditScreen from './screens/ProfileEdit';
+import AddEntryScreen from './screens/AddEntry';
 
 const Stack = createStackNavigator();
 
 export type RootStackParamList = {
     Home: undefined;
-    Profile: undefined;
-    Categories: undefined;
+    AddEntry: undefined
 };
 
 function StackScreen() {
     return (
         <Stack.Navigator
+            initialRouteName="Home"
             screenOptions={{
                 headerStyle: { backgroundColor: mainColor, elevation: 1 },
                 headerTintColor: lightColor,
@@ -38,6 +39,10 @@ function StackScreen() {
                 name="Home"
                 component={HomeScreen}
             />
+            <Stack.Screen
+                name="AddEntry"
+                component={AddEntryScreen}
+            />
         </Stack.Navigator>
     );
 }
@@ -50,9 +55,6 @@ function StackProfile() {
             }}>
             <Stack.Screen
                 options={{
-                    headerLeft: (props) => {
-                        return <View {...props} />;
-                    },
                     headerRight: () => {
                         return (
                             <View style={{ flexDirection: 'row' }}>
@@ -88,11 +90,6 @@ function StackCategory() {
                 headerTintColor: lightColor,
             }}>
             <Stack.Screen
-                options={{
-                    headerLeft: (props) => {
-                        return <View {...props} />;
-                    },
-                }}
                 name="Categories"
                 component={CategoriesScreen}
             />
@@ -109,9 +106,6 @@ function StackJournal() {
             }}>
             <Stack.Screen
                 options={{
-                    headerLeft: (props) => {
-                        return <View {...props} />;
-                    },
                     headerRight: () => {
                         return (
                             <TouchableOpacity onPress={() => Alert.alert('Text posted')}>
