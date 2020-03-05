@@ -11,7 +11,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import CategoriesScreen from './screens/Category';
 import ProfileScreen from './screens/Profile';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import JournalScreen  from './screens/Journal';
+import JournalScreen from './screens/Journal';
 
 const Stack = createStackNavigator();
 
@@ -53,26 +53,24 @@ function StackProfile() {
                         return <View {...props} />;
                     },
                     headerRight: () => {
-                        return <View style={{ flexDirection: "row" }}>
-                            {
-                                // Editin profile functions going to be added here.
-                            }
-                            <TouchableOpacity onPress={() => Alert.alert('Edit Time')}>
-                                <Icon name="edit" size={28} color={'white'} style={{ marginRight: 15 }} />
-                            </TouchableOpacity>
-                            {
-                                // Log out functions going to be added here.
-                            }
-                            <TouchableOpacity onPress={() => Alert.alert('Log Out')}>
-                                <Icon name="arrow-forward" size={28} color={'white'} style={{ marginRight: 15 }} />
-                            </TouchableOpacity>
-
-
-                        </View>;
-                    }
-
+                        return (
+                            <View style={{ flexDirection: 'row' }}>
+                                {
+                                    // Editin profile functions going to be added here.
+                                }
+                                <TouchableOpacity onPress={() => Alert.alert('Edit Time')}>
+                                    <Icon name="edit" size={28} color={'white'} style={{ marginRight: 15 }} />
+                                </TouchableOpacity>
+                                {
+                                    // Log out functions going to be added here.
+                                }
+                                <TouchableOpacity onPress={() => Alert.alert('Log Out')}>
+                                    <Icon name="arrow-forward" size={28} color={'white'} style={{ marginRight: 15 }} />
+                                </TouchableOpacity>
+                            </View>
+                        );
+                    },
                 }}
-
                 name="Profile"
                 component={ProfileScreen}
             />
@@ -99,7 +97,6 @@ function StackCategory() {
         </Stack.Navigator>
     );
 }
-
 
 function StackJournal() {
     return (
@@ -185,7 +182,7 @@ function CustomDrawerContent(props: any) {
                 <Text style={{ textAlign: 'center', fontSize: 32, color: 'white' }}>Logo</Text>
             </View>
             <DrawerItemList {...props} />
-            <DrawerItem label="Help" onPress={() => { }} />
+            <DrawerItem label="Help" onPress={() => {}} />
         </DrawerContentScrollView>
     );
 }

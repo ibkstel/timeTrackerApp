@@ -13,7 +13,7 @@ import { UserData, Data } from '../interfaces/Data';
 import { setTimer, setUserData } from '../redux/Actions';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import PushNotificationIOS from "@react-native-community/push-notification-ios";
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
 interface Props extends StateRedux {
     navigation: CompositeNavigationProp<
