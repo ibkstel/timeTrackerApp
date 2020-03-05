@@ -1,5 +1,5 @@
-export interface Profile{
-    nickname: string,
-    job: string,
-    pictureUrl: string,
+export interface Profile {
+    nickname: string;
+    job: string;
+    pictureUrl: string;
 }

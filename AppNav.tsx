@@ -11,7 +11,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import CategoriesScreen from './screens/Category';
 import ProfileScreen from './screens/Profile';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import JournalScreen  from './screens/Journal';
+import JournalScreen from './screens/Journal';
+import ProfileEditScreen from './screens/ProfileEdit';
 
 const Stack = createStackNavigator();
 
@@ -53,29 +54,33 @@ function StackProfile() {
                         return <View {...props} />;
                     },
                     headerRight: () => {
-                        return <View style={{ flexDirection: "row" }}>
-                            {
-                                // Editin profile functions going to be added here.
-                            }
-                            <TouchableOpacity onPress={() => Alert.alert('Edit Time')}>
-                                <Icon name="edit" size={28} color={'white'} style={{ marginRight: 15 }} />
-                            </TouchableOpacity>
-                            {
-                                // Log out functions going to be added here.
-                            }
-                            <TouchableOpacity onPress={() => Alert.alert('Log Out')}>
-                                <Icon name="arrow-forward" size={28} color={'white'} style={{ marginRight: 15 }} />
-                            </TouchableOpacity>
-
-
-                        </View>;
-                    }
-
+                        return (
+                            <View style={{ flexDirection: 'row' }}>
+                                {
+                                    // Editin profile functions going to be added here.
+                                }
+                                <TouchableOpacity onPress={() => Alert.alert('Edit Time')}>
+                                    <Icon name="edit" size={28} color={lightColor} style={{ marginRight: 15 }} />
+                                </TouchableOpacity>
+                                {
+                                    // Log out functions going to be added here.
+                                }
+                                <TouchableOpacity onPress={() => Alert.alert('Log Out')}>
+                                    <Icon
+                                        name="arrow-forward"
+                                        size={28}
+                                        color={lightColor}
+                                        style={{ marginRight: 15 }}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                        );
+                    },
                 }}
-
                 name="Profile"
                 component={ProfileScreen}
             />
+            <Stack.Screen name="EditProfile" component={ProfileEditScreen} />
         </Stack.Navigator>
     );
 }
@@ -100,7 +105,6 @@ function StackCategory() {
     );
 }
 
-
 function StackJournal() {
     return (
         <Stack.Navigator
@@ -112,6 +116,13 @@ function StackJournal() {
                 options={{
                     headerLeft: (props) => {
                         return <View {...props} />;
+                    },
+                    headerRight: () => {
+                        return (
+                            <TouchableOpacity onPress={() => Alert.alert('Text posted')}>
+                                <Icon name="note-add" size={28} color={lightColor} style={{ marginRight: 15 }} />
+                            </TouchableOpacity>
+                        );
                     },
                 }}
                 name="Journal"
@@ -185,7 +196,7 @@ function CustomDrawerContent(props: any) {
                 <Text style={{ textAlign: 'center', fontSize: 32, color: 'white' }}>Logo</Text>
             </View>
             <DrawerItemList {...props} />
-            <DrawerItem label="Help" onPress={() => { }} />
+            <DrawerItem label="Help" onPress={() => {}} />
         </DrawerContentScrollView>
     );
 }
