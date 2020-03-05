@@ -12,6 +12,7 @@ import CategoriesScreen from './screens/Category';
 import ProfileScreen from './screens/Profile';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import JournalScreen from './screens/Journal';
+import ProfileEditScreen from './screens/ProfileEdit';
 
 const Stack = createStackNavigator();
 
@@ -74,6 +75,7 @@ function StackProfile() {
                 name="Profile"
                 component={ProfileScreen}
             />
+            <Stack.Screen name="EditProfile" component={ProfileEditScreen} />
         </Stack.Navigator>
     );
 }
@@ -109,6 +111,13 @@ function StackJournal() {
                 options={{
                     headerLeft: (props) => {
                         return <View {...props} />;
+                    },
+                    headerRight: () => {
+                        return (
+                            <TouchableOpacity onPress={() => Alert.alert('Text posted')}>
+                                <Icon name="note-add" size={28} color={lightColor} style={{ marginRight: 15 }} />
+                            </TouchableOpacity>
+                        );
                     },
                 }}
                 name="Journal"
