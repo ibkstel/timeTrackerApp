@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { Dropdown } from 'react-native-material-dropdown';
 import { categories } from '../categories/categories';
 import Seperator from '../components/seperator/Seperator';
-import { Category } from '../interfaces/Category';
+import { Category, SubCategory } from '../interfaces/Category';
 
 interface Props extends StateRedux {
     navigation: StackNavigationProp<RootStackParamList>;
@@ -19,18 +19,21 @@ interface Props extends StateRedux {
 }
 
 interface State {
-    selected: boolean,
-    selectedItem: Category | null
+    selected: boolean;
+    selectedItem: Category | null;
+    selectedSub: boolean;
+    selectedSubItem: SubCategory | null;
 }
 
 export class AddEntryScreen extends Component<Props, State> {
-
     constructor(props: Props) {
         super(props);
         this.state = {
             selected: false,
-            selectedItem: null
-        }
+            selectedSub: false,
+            selectedItem: null,
+            selectedSubItem: null
+        };
     }
 
     render() {
@@ -44,25 +47,40 @@ export class AddEntryScreen extends Component<Props, State> {
                             data={categories.map((i) => ({ value: i.name }))}
                             label="Categories"
                             onChangeText={(text, index) => {
+                                let item = null;
+                                for (let i in categories) {
+                                    if (categories[i].name === text) {
+                                        item = categories[i];
+                                    }
+                                }
+                                this.setState({ selected: false, selectedItem: item, selectedSubItem: null }, () =>
+                                    this.setState({ selected: true }),
+                                );
                             }}
                         />
                     </View>
                     <Seperator />
-                    {
-                        this.state.selected ?
-                            <View style={{ alignItems: 'center', paddingBottom: 16 }}>
-                                <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Category</Text>
-                                <Dropdown
-                                    containerStyle={{ width: '80%' }}
-                                    data={categories.map((i) => ({ value: i.name }))}
-                                    label="Categories"
-                                    onChangeText={(text, index) => {
-                                    }}
-                                />
-                            </View>
-                            :
-                            <View />
-                    }
+                    {this.state.selected ? (
+                        <View style={{ alignItems: 'center', paddingBottom: 16, marginTop: 16 }}>
+                            <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Subcategory</Text>
+                            <Dropdown
+                                containerStyle={{ width: '80%' }}
+                                data={this.state.selectedItem!.sublabel.map((i) => ({ value: i.subname }))}
+                                label="Subcategories"
+                                onChangeText={(text, index) => {
+                                    let item = null;
+                                    for (let i in this.state.selectedItem!.sublabel) {
+                                        if (this.state.selectedItem!.sublabel[i].subname === text) {
+                                            item = this.state.selectedItem!.sublabel[i];
+                                        }
+                                    }
+                                    this.setState({ selected: true, selectedSubItem: item });
+                                }}
+                            />
+                        </View>
+                    ) : (
+                        <View />
+                    )}
                 </View>
             </ScrollView>
         );

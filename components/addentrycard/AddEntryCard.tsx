@@ -5,21 +5,27 @@ import { secondaryColor, mainColor, lightColor, lightSecondaryColor } from '../.
 
 interface Props {
     style?: ViewStyle;
-    onPress?: () => void
+    onPress?: () => void;
 }
 
 export class AddEntryCard extends Component<Props> {
-
-
     render() {
         return (
-            <TouchableOpacity style={{ ...styles.card, ...this.props.style, opacity: 1 }}
-                onPress={this.props.onPress}
-            >
+            <TouchableOpacity
+                style={{
+                    ...styles.card,
+                    ...this.props.style,
+                    opacity: 1,
+                }}
+                onPress={this.props.onPress}>
                 <View style={styles.cardView}>
                     <Text style={styles.titleText}>Add Entry</Text>
-                    <View style={{ position: 'absolute', right: 0, justifyContent: 'center' }}>
-                    </View>
+                    <View
+                        style={{
+                            position: 'absolute',
+                            right: 0,
+                            justifyContent: 'center',
+                        }}></View>
                 </View>
             </TouchableOpacity>
         );
@@ -45,5 +51,5 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         paddingVertical: 12,
         backgroundColor: secondaryColor,
-    }
+    },
 });

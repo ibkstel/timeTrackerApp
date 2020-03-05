@@ -79,7 +79,9 @@ export class Card extends Component<Props, State> {
                                         <Icon
                                             name="brightness-1"
                                             color={lightColor}
-                                            style={{ paddingRight: 2 }}
+                                            style={{
+                                                paddingRight: 2,
+                                            }}
                                             size={8}
                                         />
                                         <Text style={styles.detailText}>
@@ -137,7 +139,10 @@ export class Card extends Component<Props, State> {
     };
 
     startPauseIcon = () => (
-        <View style={{ justifyContent: 'center' }}>
+        <View
+            style={{
+                justifyContent: 'center',
+            }}>
             {!this.state.active ? (
                 <Icon
                     style={styles.iconChart}
@@ -163,7 +168,12 @@ export class Card extends Component<Props, State> {
                             ongoing: true,
                             repeatType: 'minute',
                         });
-                        this.setState({ active: true }, () => this.printDuration());
+                        this.setState(
+                            {
+                                active: true,
+                            },
+                            () => this.printDuration(),
+                        );
                     }}
                 />
             ) : (
@@ -189,10 +199,14 @@ export class Card extends Component<Props, State> {
                                 data.Durations = data.Durations.sort((a, b) => b.id - a.id);
                             }
                         });
-                        PushNotification.cancelLocalNotifications({ id: activeProcess.id.toString() });
+                        PushNotification.cancelLocalNotifications({
+                            id: activeProcess.id.toString(),
+                        });
                         this.props.setUserData(UserData!);
                         await AsyncStorage.setItem('UserData', JSON.stringify(UserData));
-                        this.setState({ active: false });
+                        this.setState({
+                            active: false,
+                        });
                     }}
                 />
             )}
@@ -225,17 +239,31 @@ export class Card extends Component<Props, State> {
     render() {
         if (!this.state.expanded) {
             return (
-                <View style={{ ...styles.card, ...this.props.style, opacity: 1 }}>
+                <View
+                    style={{
+                        ...styles.card,
+                        ...this.props.style,
+                        opacity: 1,
+                    }}>
                     <View style={styles.cardTopView}>
                         <Text style={styles.titleText}>{this.props.data?.label}</Text>
-                        <View style={{ position: 'absolute', right: 0, justifyContent: 'center' }}>
+                        <View
+                            style={{
+                                position: 'absolute',
+                                right: 0,
+                                justifyContent: 'center',
+                            }}>
                             {this.startPauseIcon()}
                         </View>
                         {this.state.expanded ? (
                             <Icon
                                 style={styles.iconChart}
                                 name="insert-chart"
-                                onPress={() => this.setState({ graph: !this.state.graph })}
+                                onPress={() =>
+                                    this.setState({
+                                        graph: !this.state.graph,
+                                    })
+                                }
                             />
                         ) : (
                             <View />
@@ -243,7 +271,11 @@ export class Card extends Component<Props, State> {
                         <Icon
                             style={styles.iconArrow}
                             name="arrow-drop-down"
-                            onPress={() => this.setState({ expanded: !this.state.expanded })}
+                            onPress={() =>
+                                this.setState({
+                                    expanded: !this.state.expanded,
+                                })
+                            }
                         />
                     </View>
                     <Seperator />
@@ -271,17 +303,31 @@ export class Card extends Component<Props, State> {
             );
         } else {
             return (
-                <View style={{ ...styles.card, ...this.props.style, opacity: 1 }}>
+                <View
+                    style={{
+                        ...styles.card,
+                        ...this.props.style,
+                        opacity: 1,
+                    }}>
                     <View style={styles.cardTopView}>
                         <Text style={styles.titleText}>{this.props.data.label}</Text>
-                        <View style={{ position: 'absolute', right: 30, justifyContent: 'center' }}>
+                        <View
+                            style={{
+                                position: 'absolute',
+                                right: 30,
+                                justifyContent: 'center',
+                            }}>
                             {this.startPauseIcon()}
                         </View>
                         {this.state.expanded ? (
                             <Icon
                                 style={styles.iconChart}
                                 name="insert-chart"
-                                onPress={() => this.setState({ graph: !this.state.graph })}
+                                onPress={() =>
+                                    this.setState({
+                                        graph: !this.state.graph,
+                                    })
+                                }
                             />
                         ) : (
                             <View />
@@ -289,7 +335,11 @@ export class Card extends Component<Props, State> {
                         <Icon
                             style={styles.iconArrow}
                             name="arrow-drop-up"
-                            onPress={() => this.setState({ expanded: !this.state.expanded })}
+                            onPress={() =>
+                                this.setState({
+                                    expanded: !this.state.expanded,
+                                })
+                            }
                         />
                     </View>
                     <Seperator />
@@ -328,10 +378,20 @@ interface StateRedux {
 
 const mapStateToProps = (state: StateRedux) => {
     const { Timer, UserData } = state;
-    return { Timer, UserData };
+    return {
+        Timer,
+        UserData,
+    };
 };
 
-const mapDispatchToProps = (dispatch: any) => bindActionCreators({ setTimer, setUserData }, dispatch);
+const mapDispatchToProps = (dispatch: any) =>
+    bindActionCreators(
+        {
+            setTimer,
+            setUserData,
+        },
+        dispatch,
+    );
 
 export default connect(mapStateToProps, mapDispatchToProps)(Card);
 

@@ -77,4 +77,9 @@ const timerReducer = (state = INITIAL_STATE_TIMER, action: ActionTimer) => {
     }
 };
 
-export const store = createStore(combineReducers({ UserData: dataReducer, Timer: timerReducer }));
+export const store = createStore(
+    combineReducers({
+        UserData: dataReducer,
+        Timer: timerReducer,
+    }),
+);

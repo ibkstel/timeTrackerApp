@@ -20,7 +20,6 @@ export default CategoriesScreen;
 
 const style = StyleSheet.create({
     categoriesColumn: {
-        paddingTop: 40,
         flexDirection: 'column',
         justifyContent: 'space-evenly',
         alignContent: 'space-around',

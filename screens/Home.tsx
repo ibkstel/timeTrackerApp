@@ -64,9 +64,7 @@ export class HomeScreen extends Component<Props> {
         return (
             <ScrollView>
                 <View style={{ marginTop: 12 }}>
-                    <AddEntryCard  
-                        onPress={() => this.props.navigation.navigate("AddEntry")}
-                    />
+                    <AddEntryCard onPress={() => this.props.navigation.navigate('AddEntry')} />
                     {this.props.UserData.Data.map((i, index) => (
                         <Card data={this.sortData(i)} />
                     ))}
