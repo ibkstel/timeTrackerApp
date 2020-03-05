@@ -9,12 +9,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import CategoriesScreen from './screens/Category';
+import ProfileScreen from './screens/Profile';
 
 const Stack = createStackNavigator();
 
 export type RootStackParamList = {
     Home: undefined;
-    Second: undefined;
+    Profile: undefined;
     Categories: undefined;
 };
 
@@ -33,6 +34,25 @@ function StackScreen() {
                 }}
                 name="Home"
                 component={HomeScreen}
+            />
+        </Stack.Navigator>
+    );
+}
+function StackProfile() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: { backgroundColor: mainColor, elevation: 1 },
+                headerTintColor: lightColor,
+            }}>
+            <Stack.Screen
+                options={{
+                    headerLeft: (props) => {
+                        return <View {...props} />;
+                    },
+                }}
+                name="Profile"
+                component={ProfileScreen}
             />
         </Stack.Navigator>
     );
@@ -89,7 +109,7 @@ function TabScreen() {
             />
             <Tab.Screen
                 name="Profile"
-                component={SecondScreen}
+                component={StackProfile}
                 options={() => ({
                     tabBarIcon: ({ color, size }: any) => {
                         return <Icon name="account-circle" size={size} color={color} />;

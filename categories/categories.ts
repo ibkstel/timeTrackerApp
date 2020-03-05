@@ -1,10 +1,6 @@
-interface subcategory {
-    subname: string;
-    subcolor: string;
-    subicon: string;
-}
+import { SubCategory, Category } from 'interfaces/Category';
 
-const transportationSubLabel: Array<subcategory> = [
+const transportationSubLabel: Array<SubCategory> = [
     {
         subname: 'Car',
         subcolor: 'blue',
@@ -37,7 +33,7 @@ const transportationSubLabel: Array<subcategory> = [
     },
 ];
 
-const socialSubLabel: Array<subcategory> = [
+const socialSubLabel: Array<SubCategory> = [
     {
         subname: 'Family',
         subcolor: 'blue',
@@ -65,7 +61,7 @@ const socialSubLabel: Array<subcategory> = [
     },
 ];
 
-const schoolSubLabel: Array<subcategory> = [
+const schoolSubLabel: Array<SubCategory> = [
     {
         subname: 'Lesson',
         subcolor: 'blue',
@@ -98,7 +94,7 @@ const schoolSubLabel: Array<subcategory> = [
     },
 ];
 
-const gymSubLabel: Array<subcategory> = [
+const gymSubLabel: Array<SubCategory> = [
     {
         subname: 'Fitness',
         subcolor: 'blue',
@@ -161,7 +157,7 @@ const gymSubLabel: Array<subcategory> = [
     },
 ];
 
-const shoppingSubLabel: Array<subcategory> = [
+const shoppingSubLabel: Array<SubCategory> = [
     {
         subname: 'Market',
         subcolor: 'blue',
@@ -189,7 +185,7 @@ const shoppingSubLabel: Array<subcategory> = [
     },
 ];
 
-const activitySubLabel: Array<subcategory> = [
+const activitySubLabel: Array<SubCategory> = [
     {
         subname: 'Reading',
         subcolor: 'blue',
@@ -217,13 +213,6 @@ const activitySubLabel: Array<subcategory> = [
     },
 ];
 
-export interface Category {
-    name: string;
-    labelColor: string;
-    sublabel: Array<subcategory>;
-    icon: string;
-}
-
 export const categories: Array<Category> = [
     {
         name: 'Transportation',
@@ -235,7 +224,7 @@ export const categories: Array<Category> = [
         name: 'Activity',
         sublabel: activitySubLabel,
         labelColor: 'red',
-        icon: 'directions-bus',
+        icon: 'mouse',
     },
     {
         name: 'Social',
@@ -259,6 +248,6 @@ export const categories: Array<Category> = [
         name: 'Shopping',
         sublabel: shoppingSubLabel,
         labelColor: 'pink',
-        icon: 'shop',
+        icon: 'shopping-cart',
     },
 ];
