@@ -13,7 +13,7 @@ import { UserData, Data } from '../interfaces/Data';
 import { setTimer, setUserData } from '../redux/Actions';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import { AddEntryCard } from '../components/addentrycard/AddEntryCard';
 
 interface Props extends StateRedux {
     navigation: CompositeNavigationProp<
@@ -64,6 +64,7 @@ export class HomeScreen extends Component<Props> {
         return (
             <ScrollView>
                 <View style={{ marginTop: 12 }}>
+                    <AddEntryCard  />
                     {this.props.UserData.Data.map((i, index) => (
                         <Card data={this.sortData(i)} />
                     ))}
