@@ -10,7 +10,7 @@ interface Props {
     images: Array<any>;
 }
 
-class JournalCard extends Component {
+class JournalCard extends Component  {
     render() {
         return <View>
             

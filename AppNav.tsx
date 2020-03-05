@@ -46,6 +46,13 @@ function StackScreen() {
         </Stack.Navigator>
     );
 }
+
+
+export type ProfileStackParamList = {
+    Profile: undefined;
+    EditProfile: undefined
+};
+
 function StackProfile() {
     return (
         <Stack.Navigator
@@ -55,24 +62,7 @@ function StackProfile() {
             }}>
             <Stack.Screen
                 options={{
-                    headerRight: () => {
-                        return (
-                            <View style={{ flexDirection: 'row' }}>
-                                {
-                                    // Editin profile functions going to be added here.
-                                }
-                                <TouchableOpacity onPress={() => Alert.alert('Edit Time')}>
-                                    <Icon name="edit" size={28} color={'white'} style={{ marginRight: 15 }} />
-                                </TouchableOpacity>
-                                {
-                                    // Log out functions going to be added here.
-                                }
-                                <TouchableOpacity onPress={() => Alert.alert('Log Out')}>
-                                    <Icon name="arrow-forward" size={28} color={'white'} style={{ marginRight: 15 }} />
-                                </TouchableOpacity>
-                            </View>
-                        );
-                    },
+                    
                 }}
                 name="Profile"
                 component={ProfileScreen}
