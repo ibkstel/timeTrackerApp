@@ -16,9 +16,17 @@ export class Graph extends Component<Props> {
     render() {
         return (
             <PieChart
-                style={{ height: 200, ...this.props.style }}
-                svg={{ fill: lightColor }}
-                contentInset={{ top: 30, bottom: 30 }}
+                style={{
+                    height: 200,
+                    ...this.props.style,
+                }}
+                svg={{
+                    fill: lightColor,
+                }}
+                contentInset={{
+                    top: 30,
+                    bottom: 30,
+                }}
                 data={this.props.data.Durations.filter((i) => !i.active)
                     .map((i) => getDiff(i.startDate, i.endDate))
                     .map((value, index) => ({

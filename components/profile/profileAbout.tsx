@@ -11,7 +11,10 @@ interface Props {
 export class ProfileAboutCard extends Component<Props> {
     render() {
         return (
-            <View style={{ margin: 15 }}>
+            <View
+                style={{
+                    margin: 15,
+                }}>
                 <View style={style.aboutCard}>
                     <Text style={style.aboutHeader}>About</Text>
                     <Text style={style.aboutText}>Country: {this.props.country}</Text>

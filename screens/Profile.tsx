@@ -14,14 +14,23 @@ export class ProfileScreen extends Component<Props> {
     render() {
         return (
             <View>
-                <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                <ScrollView
+                    contentContainerStyle={{
+                        flexGrow: 1,
+                    }}>
                     <View style={style.profileCard}>
                         <ProfileCard
                             pictureUrl="https://icons.iconarchive.com/icons/graphicloads/100-flat/256/home-icon.png"
                             nickname="stelselim"
                         />
                     </View>
-                    <View style={{ height: 1, backgroundColor: 'gray', marginHorizontal: 10 }} />
+                    <View
+                        style={{
+                            height: 1,
+                            backgroundColor: 'gray',
+                            marginHorizontal: 10,
+                        }}
+                    />
                     <ProfileAboutCard job="Software Developer" workinghour="45 Hours" country="USA" />
                     <ProfileActivityCard allActivityTime={200} last30dayActivity={100} last7dayActivity={25} />
                 </ScrollView>

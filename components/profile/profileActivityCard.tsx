@@ -11,7 +11,11 @@ interface Props {
 export class ProfileActivityCard extends Component<Props> {
     render() {
         return (
-            <View style={{ margin: 15, marginBottom: 30 }}>
+            <View
+                style={{
+                    margin: 15,
+                    marginBottom: 30,
+                }}>
                 <View style={style.activityCard}>
                     <Text style={style.activityHeader}>All Time Activity</Text>
                     <Text style={style.activityText}>Last 7 Days: {this.props.last7dayActivity} Hours</Text>

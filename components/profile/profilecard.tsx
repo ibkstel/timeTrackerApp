@@ -11,9 +11,17 @@ interface Props {
 export class ProfileCard extends Component<Props> {
     render() {
         return (
-            <View style={{ margin: 15 }}>
+            <View
+                style={{
+                    margin: 15,
+                }}>
                 <View style={style.Circular}>
-                    <Image style={style.profileImg} source={{ uri: this.props.pictureUrl }} />
+                    <Image
+                        style={style.profileImg}
+                        source={{
+                            uri: this.props.pictureUrl,
+                        }}
+                    />
                 </View>
                 <Text style={style.nicknameText}> {this.props.nickname}</Text>
             </View>
